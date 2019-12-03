@@ -285,8 +285,11 @@ class PHPExcel_Shared_OLE
                     $pps = new PHPExcel_Shared_OLE_PPS_File($name);
                     break;
                 default:
-                    continue;
+                    //continue; // Owen - PHP7.3 issues warning here
+                    // Owen PhpSpreadsheet says break, but I think that's wrong
+                    $pps = null; // Owen
             }
+            if ($pps === null) continue; // Owen
             fseek($fh, 1, SEEK_CUR);
             $pps->Type    = $type;
             $pps->Name    = $name;

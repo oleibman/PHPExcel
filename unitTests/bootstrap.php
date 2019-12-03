@@ -47,3 +47,5 @@ if (extension_loaded('xdebug')) {
 } else {
     echo 'Xdebug not found, you should run the following at the command line: echo "zend_extension=/usr/lib64/php/modules/xdebug.so" > /etc/php.d/xdebug.ini' . "\n";
 }
+
+class_alias('PHPUnit\\Framework\\TestCase', 'PHPUnit_Framework_TestCase');

@@ -183,6 +183,8 @@ class PHPExcel_Style_Border extends PHPExcel_Style_Supervisor implements PHPExce
             } else {
                 if (isset($pStyles['style'])) {
                     $this->setBorderStyle($pStyles['style']);
+                } elseif (isset($pStyles['borderStyle'])) { // Owen 2019-08-09 compatibility
+                    $this->setBorderStyle($pStyles['borderStyle']);
                 }
                 if (isset($pStyles['color'])) {
                     $this->getColor()->applyFromArray($pStyles['color']);

@@ -211,7 +211,7 @@ abstract class PHPExcel_Writer_PDF_Core extends PHPExcel_Writer_HTML
     public function __construct(PHPExcel $phpExcel)
     {
         parent::__construct($phpExcel);
-        $this->setUseInlineCss(true);
+        //$this->setUseInlineCss(true); // Owen 20180723
         $this->tempDir = PHPExcel_Shared_File::sys_get_temp_dir();
     }
 

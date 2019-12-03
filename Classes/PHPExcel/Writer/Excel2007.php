@@ -36,7 +36,7 @@ class PHPExcel_Writer_Excel2007 extends PHPExcel_Writer_Abstract implements PHPE
      *
      * @var boolean
      */
-    protected $preCalculateFormulas = false;
+    protected $preCalculateFormulas = true; // Owen - changed from false
 
     /**
      * Office2003 compatibility

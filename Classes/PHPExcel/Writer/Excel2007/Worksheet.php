@@ -501,6 +501,13 @@ class PHPExcel_Writer_Excel2007_Worksheet extends PHPExcel_Writer_Excel2007_Writ
                         && !is_null($conditional->getText())) {
                         $objWriter->writeAttribute('text', $conditional->getText());
                     }
+                    // Owen 2019-08-09 begin
+                    if ($conditional->getConditionType() == PHPExcel_Style_Conditional::CONDITION_CONTAINSBLANKS) {
+                        $objWriter->writeElement('formula',"LEN(TRIM($cellCoordinate))=0");
+                    } else if ($conditional->getConditionType() == PHPExcel_Style_Conditional::CONDITION_NOTCONTAINSBLANKS) {
+                        $objWriter->writeElement('formula',"LEN(TRIM($cellCoordinate))>0");
+                    }
+                    // Owen 2019-08-09 end
 
                     if ($conditional->getConditionType() == PHPExcel_Style_Conditional::CONDITION_CONTAINSTEXT
                         && $conditional->getOperatorType() == PHPExcel_Style_Conditional::OPERATOR_CONTAINSTEXT
