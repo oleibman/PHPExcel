@@ -6,6 +6,8 @@ require_once 'testDataFileIterator.php';
 class TextDataTest extends PHPUnit_Framework_TestCase
 {
 
+    private $thou, $curr, $decm;
+
     public function setUp()
     {
         if (!defined('PHPEXCEL_ROOT')) {
@@ -14,6 +16,16 @@ class TextDataTest extends PHPUnit_Framework_TestCase
         require_once(PHPEXCEL_ROOT . 'PHPExcel/Autoloader.php');
 
         PHPExcel_Calculation_Functions::setCompatibilityMode(PHPExcel_Calculation_Functions::COMPATIBILITY_EXCEL);
+        $this->thou = PHPExcel_Shared_String::getThousandsSeparator();
+        $this->curr = PHPExcel_Shared_String::getCurrencyCode();
+        $this->decm = PHPExcel_Shared_String::getDecimalSeparator();
+    }
+
+    public function tearDown()
+    {
+        PHPExcel_Shared_String::setThousandsSeparator($this->thou);
+        PHPExcel_Shared_String::setCurrencyCode($this->curr);
+        PHPExcel_Shared_String::setDecimalSeparator($this->decm);
     }
 
     /**

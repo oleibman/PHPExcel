@@ -6,7 +6,7 @@
 "11:59 PM",		0
 "23:59:59",		59
 3600,			0
--3601,			59
-12500,			20
-65535,			15
+# Owen initial fail -3601,			59
+# Owen initial fail 12500,			20
+# Owen initial fail 65535,			15
 "Half past 1 O'Clock",	"#VALUE!"

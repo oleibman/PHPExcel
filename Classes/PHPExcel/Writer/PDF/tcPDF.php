@@ -103,7 +103,7 @@ class PHPExcel_Writer_PDF_tcPDF extends PHPExcel_Writer_PDF_Core implements PHPE
         //  Set the appropriate font
         $pdf->SetFont($this->getFont());
         $pdf->writeHTML(
-            $this->generateHTMLHeader(false) .
+            $this->generateHTMLHeader(true) . // Owen change from false
             $this->generateSheetData() .
             $this->generateHTMLFooter()
         );

@@ -434,7 +434,25 @@ class PHPExcel_Writer_Excel5_Worksheet extends PHPExcel_Writer_Excel5_BIFFwriter
                     case PHPExcel_Cell_DataType::TYPE_FORMULA:
                         $calculatedValue = $this->_preCalculateFormulas ?
                             $cell->getCalculatedValue() : null;
-                        $this->writeFormula($row, $column, $cVal, $xfIndex, $calculatedValue);
+                        // Owen added test of writeFormula result and block below
+                        if (-3 == $this->writeFormula($row, $column, $cVal, $xfIndex, $calculatedValue)) {
+                          $calculatedValue = $cell->getCalculatedValue();
+                          $calctype = gettype($calculatedValue);
+                          if (false || isset($_REQUEST['phpexcel_xls_definedname_formula'])) {
+                            $calctype = "x$calctype"; // problem with calcval in PHPExcel2
+                          }
+                          switch ($calctype) {
+                          case 'integer':
+                          case 'double':
+                            $this->writeNumber($row, $column, $calculatedValue, $xfIndex);
+                            break;
+                          case 'string':
+                            $this->writeString($row, $column, $calculatedValue, $xfIndex);
+                            break;
+                          default:
+                            $this->writeString($row, $column, $cVal, $xfIndex);
+                          }
+                        }
                         break;
 
                     case PHPExcel_Cell_DataType::TYPE_BOOL:
@@ -827,6 +845,7 @@ class PHPExcel_Writer_Excel5_Worksheet extends PHPExcel_Writer_Excel5_BIFFwriter
      * Returns  0 : normal termination
      *         -1 : formula errors (bad formula)
      *         -2 : row or column out of range
+     *         -3 : parse raised exception, probably due to definedname Owen
      *
      * @param integer $row     Zero indexed row
      * @param integer $col     Zero indexed column
@@ -907,7 +926,7 @@ class PHPExcel_Writer_Excel5_Worksheet extends PHPExcel_Writer_Excel5_BIFFwriter
             return 0;
 
         } catch (PHPExcel_Exception $e) {
-            // do nothing
+            return -3; // Owen indication to caller rather than // do nothing
         }
 
     }
