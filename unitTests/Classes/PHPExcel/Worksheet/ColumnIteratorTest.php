@@ -7,7 +7,6 @@ class ColumnIteratorTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        self::markTestSkipped('Owen - not working initially - current undefined');
         if (!defined('PHPEXCEL_ROOT')) {
             define('PHPEXCEL_ROOT', APPLICATION_PATH . '/');
         }
@@ -24,9 +23,6 @@ class ColumnIteratorTest extends PHPUnit_Framework_TestCase
         $this->mockWorksheet->expects($this->any())
                  ->method('getHighestColumn')
                  ->will($this->returnValue('E'));
-        $this->mockWorksheet->expects($this->any())
-                 ->method('current')
-                 ->will($this->returnValue($this->mockColumn));
     }
 
 
