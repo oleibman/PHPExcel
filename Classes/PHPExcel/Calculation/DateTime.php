@@ -818,6 +818,8 @@ class PHPExcel_Calculation_DateTime
      *
      * Excel Function:
      *        YEARFRAC(startDate,endDate[,method])
+     * See https://lists.oasis-open.org/archives/office-formula/200806/msg00039.html
+     *     for description of algorithm used in Excel
      *
      * @access    public
      * @category Date/Time Functions
@@ -845,6 +847,11 @@ class PHPExcel_Calculation_DateTime
         if (is_string($endDate = self::getDateValue($endDate))) {
             return PHPExcel_Calculation_Functions::VALUE();
         }
+        if ($startDate > $endDate) {
+            $temp = $startDate;
+            $startDate = $endDate;
+            $endDate = $temp;
+        }
 
         if (((is_numeric($method)) && (!is_string($method))) || ($method == '')) {
             switch ($method) {
@@ -855,45 +862,40 @@ class PHPExcel_Calculation_DateTime
                     $startYear = self::YEAR($startDate);
                     $endYear = self::YEAR($endDate);
                     $years = $endYear - $startYear + 1;
-                    $leapDays = 0;
+                    $startMonth = self::MONTHOFYEAR($startDate);
+                    $startDay = self::DAYOFMONTH($startDate);
+                    $endMonth = self::MONTHOFYEAR($endDate);
+                    $endDay = self::DAYOFMONTH($endDate);
                     if ($years == 1) {
                         if (self::isLeapYear($endYear)) {
-                            $startMonth = self::MONTHOFYEAR($startDate);
-                            $endMonth = self::MONTHOFYEAR($endDate);
-                            $endDay = self::DAYOFMONTH($endDate);
-                            if (($startMonth < 3) ||
-                                (($endMonth * 100 + $endDay) >= (2 * 100 + 29))) {
-                                 $leapDays += 1;
+                            $tmpCalcAnnualBasis = 366;
+                        } else {
+                            $tmpCalcAnnualBasis = 365;
+                        }
+                    } else if ($years == 2 && (($startMonth > $endMonth) || ($startMonth == $endMonth && $startDay >= $endDay))) {
+                        if (self::isLeapYear($startYear)) {
+                            if ($startMonth < 2 || ($startMonth == 2 && $startDay <= 29)) {
+                                $tmpCalcAnnualBasis = 366;
+                            } else {
+                                $tmpCalcAnnualBasis = 365;
                             }
+                        } elseif (self::isLeapYear($endYear)) {
+                            if ($endMonth > 2 || ($endMonth == 2 && $endDay == 29)) {
+                                $tmpCalcAnnualBasis = 366;
+                            } else {
+                                $tmpCalcAnnualBasis = 365;
+                            }
+                        } else {
+                            $tmpCalcAnnualBasis = 365;
                         }
                     } else {
+                        $tmpCalcAnnualBasis = 0;
                         for ($year = $startYear; $year <= $endYear; ++$year) {
-                            if ($year == $startYear) {
-                                $startMonth = self::MONTHOFYEAR($startDate);
-                                $startDay = self::DAYOFMONTH($startDate);
-                                if ($startMonth < 3) {
-                                    $leapDays += (self::isLeapYear($year)) ? 1 : 0;
-                                }
-                            } elseif ($year == $endYear) {
-                                $endMonth = self::MONTHOFYEAR($endDate);
-                                $endDay = self::DAYOFMONTH($endDate);
-                                if (($endMonth * 100 + $endDay) >= (2 * 100 + 29)) {
-                                    $leapDays += (self::isLeapYear($year)) ? 1 : 0;
-                                }
-                            } else {
-                                $leapDays += (self::isLeapYear($year)) ? 1 : 0;
-                            }
+                            $tmpCalcAnnualBasis += self::isLeapYear($year) ? 366 : 365;
                         }
-                        if ($years == 2) {
-                            if (($leapDays == 0) && (self::isLeapYear($startYear)) && ($days > 365)) {
-                                $leapDays = 1;
-                            } elseif ($days < 366) {
-                                $years = 1;
-                            }
-                        }
-                        $leapDays /= $years;
+                        $tmpCalcAnnualBasis /= $years;
                     }
-                    return $days / (365 + $leapDays);
+                    return $days / $tmpCalcAnnualBasis;
                 case 2:
                     return self::DATEDIF($startDate, $endDate) / 360;
                 case 3:
@@ -1242,14 +1244,23 @@ class PHPExcel_Calculation_DateTime
 
         if (!is_numeric($method)) {
             return PHPExcel_Calculation_Functions::VALUE();
-        } elseif (($method < 1) || ($method > 2)) {
-            return PHPExcel_Calculation_Functions::NaN();
         }
         $method = floor($method);
+        if ($method < 1) {
+            return PHPExcel_Calculation_Functions::NaN();
+        } elseif ($method < 3) {
+            // do nothing
+        } elseif ($method < 11) {
+            return PHPExcel_Calculation_Functions::NaN();
+        } elseif ($method < 17) {
+            $method -= 9;
+        } elseif ($method == 17) {
+            $method = 1;
+        } elseif ($method != 21) {
+            return PHPExcel_Calculation_Functions::NaN();
+        }
 
-        if ($dateValue === null) {
-            $dateValue = 1;
-        } elseif (is_string($dateValue = self::getDateValue($dateValue))) {
+        if (is_string($dateValue = self::getDateValue($dateValue))) {
             return PHPExcel_Calculation_Functions::VALUE();
         } elseif ($dateValue < 0.0) {
             return PHPExcel_Calculation_Functions::NaN();
@@ -1257,17 +1268,21 @@ class PHPExcel_Calculation_DateTime
 
         // Execute function
         $PHPDateObject = PHPExcel_Shared_Date::ExcelToPHPObject($dateValue);
+        if ($method == 21) {
+            return $PHPDateObject->format('W');
+        }
         $dayOfYear = $PHPDateObject->format('z');
-        $dow = $PHPDateObject->format('w');
         $PHPDateObject->modify('-' . $dayOfYear . ' days');
-        $dow = $PHPDateObject->format('w');
-        $daysInFirstWeek = 7 - (($dow + (2 - $method)) % 7);
-        $dayOfYear -= $daysInFirstWeek;
-        $weekOfYear = ceil($dayOfYear / 7) + 1;
+        $firstDayOfFirstWeek = $PHPDateObject->format('w');
+        $daysInFirstWeek = (6 - $firstDayOfFirstWeek + $method) % 7;
+        if ($daysInFirstWeek === 0) {
+            $daysInFirstWeek = 7;
+        }
+        $endFirstWeek = $daysInFirstWeek - 1;
+        $weekOfYear = floor(($dayOfYear - $endFirstWeek + 13) / 7);
 
         return (int) $weekOfYear;
     }
-
 
     /**
      * MONTHOFYEAR
@@ -1286,7 +1301,7 @@ class PHPExcel_Calculation_DateTime
     {
         $dateValue    = PHPExcel_Calculation_Functions::flattenSingleValue($dateValue);
 
-        if ($dateValue === null) {
+        if (empty($dateValue)) {
             $dateValue = 1;
         } elseif (is_string($dateValue = self::getDateValue($dateValue))) {
             return PHPExcel_Calculation_Functions::VALUE();

@@ -7,7 +7,6 @@ class RowIteratorTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        self::markTestSkipped('Owen - not working initially - current undefined');
         if (!defined('PHPEXCEL_ROOT')) {
             define('PHPEXCEL_ROOT', APPLICATION_PATH . '/');
         }
@@ -24,9 +23,6 @@ class RowIteratorTest extends PHPUnit_Framework_TestCase
         $this->mockWorksheet->expects($this->any())
                  ->method('getHighestRow')
                  ->will($this->returnValue(5));
-        $this->mockWorksheet->expects($this->any())
-                 ->method('current')
-                 ->will($this->returnValue($this->mockRow));
     }
 
 

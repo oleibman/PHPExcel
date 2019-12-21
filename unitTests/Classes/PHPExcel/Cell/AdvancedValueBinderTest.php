@@ -2,12 +2,24 @@
 
 class AdvancedValueBinderTest extends PHPUnit_Framework_TestCase
 {
+    private $thou, $curr, $decm;
+
     public function setUp()
     {
         if (!defined('PHPEXCEL_ROOT')) {
             define('PHPEXCEL_ROOT', APPLICATION_PATH . '/');
         }
         require_once(PHPEXCEL_ROOT . 'PHPExcel/Autoloader.php');
+        $this->curr = PHPExcel_Shared_String::getCurrencyCode();
+        $this->decm = PHPExcel_Shared_String::getDecimalSeparator();
+        $this->thou = PHPExcel_Shared_String::getThousandsSeparator();
+    }
+
+    public function tearDown()
+    {
+        PHPExcel_Shared_String::setCurrencyCode($this->curr);
+        PHPExcel_Shared_String::setDecimalSeparator($this->decm);
+        PHPExcel_Shared_String::setThousandsSeparator($this->thou);
     }
 
     public function provider()
@@ -35,11 +47,9 @@ class AdvancedValueBinderTest extends PHPUnit_Framework_TestCase
      */
     public function testCurrency($value, $valueBinded, $format, $thousandsSeparator, $decimalSeparator, $currencyCode)
     {
-        self::markTestSkipped('Owen - not working initially - getMock undefined');
-        $sheet = $this->getMock(
-            'PHPExcel_Worksheet',
-            array('getStyle', 'getNumberFormat', 'setFormatCode','getCellCacheController')
-        );
+        $sheet = $this->getMockBuilder('PHPExcel_Worksheet')
+            ->setMethods(['getStyle', 'getNumberFormat', 'setFormatCode', 'getCellCacheController'])
+            ->getMock();
         $cache = $this->getMockBuilder('PHPExcel_CachedObjectStorage_Memory')
             ->disableOriginalConstructor()
             ->getMock();
