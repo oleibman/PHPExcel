@@ -191,16 +191,25 @@ class PHPExcel_Style_Font extends PHPExcel_Style_Supervisor implements PHPExcel_
                 if (array_key_exists('italic', $pStyles)) {
                     $this->setItalic($pStyles['italic']);
                 }
-                if (array_key_exists('superScript', $pStyles)) {
+                if (array_key_exists('superscript', $pStyles)) {
+                    $this->setSuperScript($pStyles['superscript']);
+                } elseif (array_key_exists('superScript', $pStyles)) { // Owen 2020-02-11
+                    trigger_error('Prefer superscript to superScript for Font applyFromArray', E_USER_WARNING);
                     $this->setSuperScript($pStyles['superScript']);
                 }
-                if (array_key_exists('subScript', $pStyles)) {
+                if (array_key_exists('subscript', $pStyles)) { // Owen 2020-02-11
+                    $this->setSubScript($pStyles['subscript']);
+                } elseif (array_key_exists('subScript', $pStyles)) {
+                    trigger_error('Prefer subscript to subScript for Font applyFromArray', E_USER_WARNING);
                     $this->setSubScript($pStyles['subScript']);
                 }
                 if (array_key_exists('underline', $pStyles)) {
                     $this->setUnderline($pStyles['underline']);
                 }
-                if (array_key_exists('strike', $pStyles)) {
+                if (array_key_exists('strikethrough', $pStyles)) { // Owen 2020-02-11
+                    $this->setStrikethrough($pStyles['strikethrough']);
+                } elseif (array_key_exists('strike', $pStyles)) {
+                    trigger_error('Prefer strikethrough to strike for Font applyFromArray', E_USER_WARNING);
                     $this->setStrikethrough($pStyles['strike']);
                 }
                 if (array_key_exists('color', $pStyles)) {
@@ -373,7 +382,7 @@ class PHPExcel_Style_Font extends PHPExcel_Style_Supervisor implements PHPExcel_
             $pValue = false;
         }
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(array('superScript' => $pValue));
+            $styleArray = $this->getStyleArray(array('superscript' => $pValue)); // Owen 2020-02-11
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->superScript = $pValue;
@@ -407,7 +416,7 @@ class PHPExcel_Style_Font extends PHPExcel_Style_Supervisor implements PHPExcel_
             $pValue = false;
         }
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(array('subScript' => $pValue));
+            $styleArray = $this->getStyleArray(array('subscript' => $pValue)); // Owen 2020-02-11
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->subScript = $pValue;
@@ -478,7 +487,7 @@ class PHPExcel_Style_Font extends PHPExcel_Style_Supervisor implements PHPExcel_
             $pValue = false;
         }
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(array('strike' => $pValue));
+            $styleArray = $this->getStyleArray(array('strikethrough' => $pValue)); // Owen 2020-02-11
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->strikethrough = $pValue;

@@ -755,6 +755,19 @@ class PHPExcel_Calculation_Engineering
     public static function parseComplex($complexNumber)
     {
         $workString = (string) $complexNumber;
+        // Owen 2019-12-24
+        // Search for "Floating Complex Number" on
+        // http://regexlib.com/(X(1)A(dYp0KDHvAlWA9WIdG32zQOeih3cQ6MOrJvonFcIT7o8L5pCMPWFrhv9GjLMpttNcf4e7P6D_iDOB9VCZzPnpJo1xxrueKZe-Og8N6-W5z0OWZFmwdU2X8kaHpMI0wna_cW3PHqTZ9tKBvviv1f2-Q6ElAV4jN3fTm98iWhomUdPAZdK-rkuQ0rjYxawa9kLB0))/Search.aspx?k=float&AspxAutoDetectCookieSupport=1
+        $pat = '/^([-+]?(\d+\.?\d*|\d*\.?\d+)([Ee][-+]?[0-2]?\d{1,2})?[r]?|[-+]?((\d+\.?\d*|\d*\.?\d+)([Ee][-+]?[0-2]?\d{1,2})?)?[ij]|[-+]?(\d+\.?\d*|\d*\.?\d+)([Ee][-+]?[0-2]?\d{1,2})?[r]?[-+]((\d+\.?\d*|\d*\.?\d+)([Ee][-+]?[0-2]?\d{1,2})?)?[ij])$/';
+        $nospace = str_replace(' ', '', $workString);
+        if (preg_match($pat, $nospace) !== 1) {
+            return array(
+                'real'   => 0,
+                'imaginary' => 0,
+                'err' => PHPExcel_Calculation_Functions::NaN(),
+                'suffix' => ''
+            );
+        }
 
         $realNumber = $imaginary = 0;
         //    Extract the suffix, if there is one
@@ -796,6 +809,7 @@ class PHPExcel_Calculation_Engineering
         return array(
             'real'   => $realNumber,
             'imaginary' => $imaginary,
+            'err' => '',
             'suffix' => $suffix
         );
     }
@@ -1824,6 +1838,9 @@ class PHPExcel_Calculation_Engineering
         $complexNumber    = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
         return $parsedComplex['imaginary'];
     }
 
@@ -1846,6 +1863,9 @@ class PHPExcel_Calculation_Engineering
         $complexNumber    = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
         return $parsedComplex['real'];
     }
 
@@ -1866,6 +1886,9 @@ class PHPExcel_Calculation_Engineering
         $complexNumber = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
 
         return sqrt(
             ($parsedComplex['real'] * $parsedComplex['real']) +
@@ -1891,10 +1914,13 @@ class PHPExcel_Calculation_Engineering
         $complexNumber    = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
 
         if ($parsedComplex['real'] == 0.0) {
             if ($parsedComplex['imaginary'] == 0.0) {
-                return 0.0;
+                return "#DIV/0!"; // Owen 2019-12-24 in PhpSpreadsheet
             } elseif ($parsedComplex['imaginary'] < 0.0) {
                 return M_PI / -2;
             } else {
@@ -1926,6 +1952,9 @@ class PHPExcel_Calculation_Engineering
         $complexNumber    = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
 
         if ($parsedComplex['imaginary'] == 0.0) {
             return $parsedComplex['real'];
@@ -1957,6 +1986,9 @@ class PHPExcel_Calculation_Engineering
         $complexNumber    = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
 
         if ($parsedComplex['imaginary'] == 0.0) {
             return cos($parsedComplex['real']);
@@ -1988,6 +2020,9 @@ class PHPExcel_Calculation_Engineering
         $complexNumber    = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
 
         if ($parsedComplex['imaginary'] == 0.0) {
             return sin($parsedComplex['real']);
@@ -2017,8 +2052,14 @@ class PHPExcel_Calculation_Engineering
         $complexNumber    = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
 
         $theta = self::IMARGUMENT($complexNumber);
+        if ($theta === PHPExcel_Calculation_Functions::DIV0()) { // Owen 2019-12-24 from PhpSpreadsheet
+            return '0';
+        }
         $d1 = cos($theta / 2);
         $d2 = sin($theta / 2);
         $r = sqrt(sqrt(($parsedComplex['real'] * $parsedComplex['real']) + ($parsedComplex['imaginary'] * $parsedComplex['imaginary'])));
@@ -2047,6 +2088,9 @@ class PHPExcel_Calculation_Engineering
         $complexNumber    = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
 
         if (($parsedComplex['real'] == 0.0) && ($parsedComplex['imaginary'] == 0.0)) {
             return PHPExcel_Calculation_Functions::NaN();
@@ -2079,6 +2123,9 @@ class PHPExcel_Calculation_Engineering
         $complexNumber = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
 
         if (($parsedComplex['real'] == 0.0) && ($parsedComplex['imaginary'] == 0.0)) {
             return PHPExcel_Calculation_Functions::NaN();
@@ -2106,6 +2153,9 @@ class PHPExcel_Calculation_Engineering
         $complexNumber    = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
 
         if (($parsedComplex['real'] == 0.0) && ($parsedComplex['imaginary'] == 0.0)) {
             return PHPExcel_Calculation_Functions::NaN();
@@ -2133,6 +2183,9 @@ class PHPExcel_Calculation_Engineering
         $complexNumber = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber);
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
 
         if (($parsedComplex['real'] == 0.0) && ($parsedComplex['imaginary'] == 0.0)) {
             return '1';
@@ -2172,6 +2225,26 @@ class PHPExcel_Calculation_Engineering
         }
 
         $parsedComplex = self::parseComplex($complexNumber);
+        if ($parsedComplex['err']) { // Owen 2019-12-24
+            return $parsedComplex['err'];
+        }
+        if ($parsedComplex['real'] == 0 && $parsedComplex['imaginary'] == 0) { // Owen 2019-12-24
+            if ($realNumber > 0) {
+                return "0";
+            }
+            return "#NUM!";
+        }
+        if ($parsedComplex['imaginary'] == 0) { // Owen 2019-12-24
+            if ($parsedComplex['real'] == 0) {
+                if ($realNumber > 0) {
+                    return "0";
+                }
+                return "#NUM!";
+            }
+            if ($parsedComplex['real'] > 0) {
+                return self::COMPLEX(pow($parsedComplex['real'], $realNumber));
+            }
+        }
 
         $r = sqrt(($parsedComplex['real'] * $parsedComplex['real']) + ($parsedComplex['imaginary'] * $parsedComplex['imaginary']));
         $rPower = pow($r, $realNumber);
@@ -2204,7 +2277,13 @@ class PHPExcel_Calculation_Engineering
         $complexDivisor    = PHPExcel_Calculation_Functions::flattenSingleValue($complexDivisor);
 
         $parsedComplexDividend = self::parseComplex($complexDividend);
+        if ($parsedComplexDividend['err']) { // Owen 2019-12-24
+            return $parsedComplexDividend['err'];
+        }
         $parsedComplexDivisor = self::parseComplex($complexDivisor);
+        if ($parsedComplexDivisor['err']) { // Owen 2019-12-24
+            return $parsedComplexDivisor['err'];
+        }
 
         if (($parsedComplexDividend['suffix'] != '') && ($parsedComplexDivisor['suffix'] != '') &&
             ($parsedComplexDividend['suffix'] != $parsedComplexDivisor['suffix'])) {
@@ -2249,7 +2328,13 @@ class PHPExcel_Calculation_Engineering
         $complexNumber2    = PHPExcel_Calculation_Functions::flattenSingleValue($complexNumber2);
 
         $parsedComplex1 = self::parseComplex($complexNumber1);
+        if ($parsedComplex1['err']) { // Owen 2019-12-24
+            return $parsedComplex1['err'];
+        }
         $parsedComplex2 = self::parseComplex($complexNumber2);
+        if ($parsedComplex2['err']) { // Owen 2019-12-24
+            return $parsedComplex2['err'];
+        }
 
         if ((($parsedComplex1['suffix'] != '') && ($parsedComplex2['suffix'] != '')) &&
             ($parsedComplex1['suffix'] != $parsedComplex2['suffix'])) {
@@ -2286,6 +2371,9 @@ class PHPExcel_Calculation_Engineering
         $aArgs = PHPExcel_Calculation_Functions::flattenArray(func_get_args());
         foreach ($aArgs as $arg) {
             $parsedComplex = self::parseComplex($arg);
+            if ($parsedComplex['err']) { // Owen 2019-12-24
+                return $parsedComplex['err'];
+            }
 
             if ($activeSuffix == '') {
                 $activeSuffix = $parsedComplex['suffix'];
@@ -2325,6 +2413,9 @@ class PHPExcel_Calculation_Engineering
         $aArgs = PHPExcel_Calculation_Functions::flattenArray(func_get_args());
         foreach ($aArgs as $arg) {
             $parsedComplex = self::parseComplex($arg);
+            if ($parsedComplex['err']) { // Owen 2019-12-24
+                return $parsedComplex['err'];
+            }
 
             $workValue = $returnValue;
             if (($parsedComplex['suffix'] != '') && ($activeSuffix == '')) {

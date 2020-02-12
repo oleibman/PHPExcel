@@ -1,0 +1,19 @@
+# Formula Result // Comments
+'=SUM(1,2,3)', 6
+'=SUM(A1:A3)', 60
+'=SUM(A1,A2,A4)', 70
+'=SUM(1,namedCell)', 41
+'=A1+namedCell', 50
+'=MATCH(6,{4,5,6,2},0)', 3
+'=MATCH(8,{4,5,6,2},0)', '#N/A'
+'=HLOOKUP(5,{1,5,10;2,6,11;3,7,12;4,8,13},3,FALSE)', 7
+'=CONCATENATE("Hello, ", "World.")', 'Hello, World.'
+'=UPPER("{non-EMPTY set}")', "{NON-EMPTY SET}" // braces not used for matrix
+'=LOWER(B1)', 'upper'
+'=and(B2,B3)', false
+'=acos(1)', 0
+'=round(atan({1,2,3}),6)', 0.785398 // {1,2,3} will be flattened to 1
+'=minverse({-2.5,1.5;2,-1})', 2 // 2 is the flattened result of {2,3;4,5}
+'=MDETERM(MMULT({1,2;3,4},{5,6;7,8}))', 4 // multiple matrices
+'=SUM(A1,Sheet2!$A$1)', 110 // different sheet absolute address
+'=SUM(A2,A2B)', 220 // defined name on different sheet

@@ -237,10 +237,19 @@ class PHPExcel_Style_Borders extends PHPExcel_Style_Supervisor implements PHPExc
                 if (array_key_exists('diagonal', $pStyles)) {
                     $this->getDiagonal()->applyFromArray($pStyles['diagonal']);
                 }
-                if (array_key_exists('diagonaldirection', $pStyles)) {
+                if (array_key_exists('diagonalDirection', $pStyles)) { // Owen 2020-02-11
+                    $this->setDiagonalDirection($pStyles['diagonalDirection']);
+                } elseif (array_key_exists('diagonaldirection', $pStyles)) {
+                    trigger_error('Prefer diagonalDirection to diagnonaldirection for Borders applyFromArray', E_USER_WARNING);
                     $this->setDiagonalDirection($pStyles['diagonaldirection']);
                 }
-                if (array_key_exists('allborders', $pStyles)) {
+                if (array_key_exists('allBorders', $pStyles)) { // Owen 2020-02-11
+                    $this->getLeft()->applyFromArray($pStyles['allBorders']);
+                    $this->getRight()->applyFromArray($pStyles['allBorders']);
+                    $this->getTop()->applyFromArray($pStyles['allBorders']);
+                    $this->getBottom()->applyFromArray($pStyles['allBorders']);
+                } elseif (array_key_exists('allborders', $pStyles)) {
+                    trigger_error('Prefer allBorders to allborders for Borders applyFromArray', E_USER_WARNING);
                     $this->getLeft()->applyFromArray($pStyles['allborders']);
                     $this->getRight()->applyFromArray($pStyles['allborders']);
                     $this->getTop()->applyFromArray($pStyles['allborders']);
@@ -398,7 +407,7 @@ class PHPExcel_Style_Borders extends PHPExcel_Style_Supervisor implements PHPExc
             $pValue = PHPExcel_Style_Borders::DIAGONAL_NONE;
         }
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(array('diagonaldirection' => $pValue));
+            $styleArray = $this->getStyleArray(array('diagonalDirection' => $pValue)); // Owen 2020-02-11
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->diagonalDirection = $pValue;

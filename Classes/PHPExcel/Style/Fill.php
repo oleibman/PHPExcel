@@ -157,16 +157,25 @@ class PHPExcel_Style_Fill extends PHPExcel_Style_Supervisor implements PHPExcel_
             if ($this->isSupervisor) {
                 $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($this->getStyleArray($pStyles));
             } else {
-                if (array_key_exists('type', $pStyles)) {
+                if (array_key_exists('fillType', $pStyles)) { // Owen 2020-02-11
+                    $this->setFillType($pStyles['fillType']);
+                } elseif (array_key_exists('type', $pStyles)) {
+                    trigger_error('Prefer fillType to type for Fill applyFromArray', E_USER_WARNING);
                     $this->setFillType($pStyles['type']);
                 }
                 if (array_key_exists('rotation', $pStyles)) {
                     $this->setRotation($pStyles['rotation']);
                 }
-                if (array_key_exists('startcolor', $pStyles)) {
+                if (array_key_exists('startColor', $pStyles)) { // Owen 2020-02-11
+                    $this->getStartColor()->applyFromArray($pStyles['startColor']);
+                } elseif (array_key_exists('startcolor', $pStyles)) {
+                    trigger_error('Prefer startColor to startcolor for Fill applyFromArray', E_USER_WARNING);
                     $this->getStartColor()->applyFromArray($pStyles['startcolor']);
                 }
-                if (array_key_exists('endcolor', $pStyles)) {
+                if (array_key_exists('endColor', $pStyles)) { // Owen 2020-02-11
+                    $this->getEndColor()->applyFromArray($pStyles['endColor']);
+                } elseif (array_key_exists('endcolor', $pStyles)) {
+                    trigger_error('Prefer endColor to endcolor for Fill applyFromArray', E_USER_WARNING);
                     $this->getEndColor()->applyFromArray($pStyles['endcolor']);
                 }
                 if (array_key_exists('color', $pStyles)) {
@@ -201,7 +210,7 @@ class PHPExcel_Style_Fill extends PHPExcel_Style_Supervisor implements PHPExcel_
     public function setFillType($pValue = PHPExcel_Style_Fill::FILL_NONE)
     {
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(array('type' => $pValue));
+            $styleArray = $this->getStyleArray(array('fillType' => $pValue)); // Owen 2020-02-11
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->fillType = $pValue;

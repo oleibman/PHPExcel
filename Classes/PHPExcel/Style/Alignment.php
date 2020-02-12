@@ -172,10 +172,16 @@ class PHPExcel_Style_Alignment extends PHPExcel_Style_Supervisor implements PHPE
                 if (isset($pStyles['vertical'])) {
                     $this->setVertical($pStyles['vertical']);
                 }
-                if (isset($pStyles['rotation'])) {
+                if (isset($pStyles['textRotation'])) { // Owen 2020-02-11
+                    $this->setTextRotation($pStyles['textRotation']);
+                } elseif (isset($pStyles['rotation'])) {
+                    trigger_error('Prefer textRotation to rotation for Alignment applyFromArray', E_USER_WARNING);
                     $this->setTextRotation($pStyles['rotation']);
                 }
-                if (isset($pStyles['wrap'])) {
+                if (isset($pStyles['wrapText'])) { // Owen 2020-02-11
+                    $this->setWrapText($pStyles['wrapText']);
+                } elseif (isset($pStyles['wrap'])) {
+                    trigger_error('Prefer wrapText to wrap for Alignment applyFromArray', E_USER_WARNING);
                     $this->setWrapText($pStyles['wrap']);
                 }
                 if (isset($pStyles['shrinkToFit'])) {
@@ -184,7 +190,10 @@ class PHPExcel_Style_Alignment extends PHPExcel_Style_Supervisor implements PHPE
                 if (isset($pStyles['indent'])) {
                     $this->setIndent($pStyles['indent']);
                 }
-                if (isset($pStyles['readorder'])) {
+                if (isset($pStyles['readOrder'])) { // Owen 2020-02-11
+                    $this->setReadorder($pStyles['readOrder']);
+                } elseif (isset($pStyles['readorder'])) {
+                    trigger_error('Prefer readOrder to readorder for Alignment applyFromArray', E_USER_WARNING);
                     $this->setReadorder($pStyles['readorder']);
                 }
             }
@@ -292,7 +301,7 @@ class PHPExcel_Style_Alignment extends PHPExcel_Style_Supervisor implements PHPE
         // Set rotation
         if (($pValue >= -90 && $pValue <= 90) || $pValue == -165) {
             if ($this->isSupervisor) {
-                $styleArray = $this->getStyleArray(array('rotation' => $pValue));
+                $styleArray = $this->getStyleArray(array('textRotation' => $pValue)); // Owen 2020-02-11
                 $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
             } else {
                 $this->textRotation = $pValue;
@@ -329,7 +338,7 @@ class PHPExcel_Style_Alignment extends PHPExcel_Style_Supervisor implements PHPE
             $pValue = false;
         }
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(array('wrap' => $pValue));
+            $styleArray = $this->getStyleArray(array('wrapText' => $pValue)); // Owen 2020-02-11
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->wrapText = $pValue;
@@ -432,7 +441,7 @@ class PHPExcel_Style_Alignment extends PHPExcel_Style_Supervisor implements PHPE
             $pValue = 0;
         }
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(array('readorder' => $pValue));
+            $styleArray = $this->getStyleArray(array('readOrder' => $pValue)); // Owen 2020-02-11
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->readorder = $pValue;

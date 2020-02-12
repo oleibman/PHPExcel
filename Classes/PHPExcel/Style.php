@@ -242,7 +242,15 @@ class PHPExcel_Style extends PHPExcel_Style_Supervisor implements PHPExcel_IComp
                 if ($pAdvanced && isset($pStyles['borders'])) {
                     // 'allborders' is a shorthand property for 'outline' and 'inside' and
                     //        it applies to components that have not been set explicitly
-                    if (isset($pStyles['borders']['allborders'])) {
+                    if (isset($pStyles['borders']['allBorders'])) { // Owen 2020-02-11
+                        foreach (array('outline', 'inside') as $component) {
+                            if (!isset($pStyles['borders'][$component])) {
+                                $pStyles['borders'][$component] = $pStyles['borders']['allBorders'];
+                            }
+                        }
+                        unset($pStyles['borders']['allborders']); // not needed any more
+                    } elseif (isset($pStyles['borders']['allborders'])) {
+                        trigger_error('Prefer allBorders to allborders for Style applyFromArray', E_USER_WARNING);
                         foreach (array('outline', 'inside') as $component) {
                             if (!isset($pStyles['borders'][$component])) {
                                 $pStyles['borders'][$component] = $pStyles['borders']['allborders'];
@@ -453,7 +461,10 @@ class PHPExcel_Style extends PHPExcel_Style_Supervisor implements PHPExcel_IComp
                 if (array_key_exists('alignment', $pStyles)) {
                     $this->getAlignment()->applyFromArray($pStyles['alignment']);
                 }
-                if (array_key_exists('numberformat', $pStyles)) {
+                if (array_key_exists('numberFormat', $pStyles)) { // Owen 2020-02-11
+                    $this->getNumberFormat()->applyFromArray($pStyles['numberFormat']);
+                } elseif (array_key_exists('numberformat', $pStyles)) {
+                    trigger_error('Prefer numberFormat to numberformat Style applyFromArray', E_USER_WARNING);
                     $this->getNumberFormat()->applyFromArray($pStyles['numberformat']);
                 }
                 if (array_key_exists('protection', $pStyles)) {

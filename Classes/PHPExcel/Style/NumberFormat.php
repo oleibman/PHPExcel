@@ -159,7 +159,10 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
             if ($this->isSupervisor) {
                 $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($this->getStyleArray($pStyles));
             } else {
-                if (array_key_exists('code', $pStyles)) {
+                if (array_key_exists('formatCode', $pStyles)) { // Owen 2020-02-11
+                    $this->setFormatCode($pStyles['formatCode']);
+                } elseif (array_key_exists('code', $pStyles)) {
+                    trigger_error('Prefer formatCode to code for NumberFormat applyFromArray', E_USER_WARNING);
                     $this->setFormatCode($pStyles['code']);
                 }
             }
@@ -197,7 +200,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
             $pValue = PHPExcel_Style_NumberFormat::FORMAT_GENERAL;
         }
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(array('code' => $pValue));
+            $styleArray = $this->getStyleArray(array('formatCode' => $pValue)); // Owen 2020-02-11
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->formatCode = $pValue;
@@ -358,7 +361,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
         self::fillBuiltInFormatCodes();
 
         // Lookup format code
-        if (isset(self::$flippedBuiltInFormats[$formatCode])) {
+        if (array_key_exists($formatCode, self::$flippedBuiltInFormats)) { // Owen 2019-12-21
             return self::$flippedBuiltInFormats[$formatCode];
         }
 

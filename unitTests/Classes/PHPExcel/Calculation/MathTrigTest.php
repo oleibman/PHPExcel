@@ -277,7 +277,7 @@ class MathTrigTest extends PHPUnit_Framework_TestCase
      */
     public function testMINVERSE()
     {
-        self::markTestSkipped('Owen initial failure');
+        //self::markTestSkipped('Owen initial failure');
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_MathTrig','MINVERSE'), $args);

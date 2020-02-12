@@ -601,7 +601,7 @@ class PHPExcel_Calculation_MathTrig
                 if ((is_string($matrixCell)) || ($matrixCell === null)) {
                     return PHPExcel_Calculation_Functions::VALUE();
                 }
-                $matrixData[$column][$row] = $matrixCell;
+                $matrixData[$row][$column] = $matrixCell; // Owen 2019-12-23
                 ++$column;
             }
             if ($column > $maxColumn) {

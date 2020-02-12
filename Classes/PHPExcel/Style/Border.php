@@ -181,10 +181,11 @@ class PHPExcel_Style_Border extends PHPExcel_Style_Supervisor implements PHPExce
             if ($this->isSupervisor) {
                 $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($this->getStyleArray($pStyles));
             } else {
-                if (isset($pStyles['style'])) {
-                    $this->setBorderStyle($pStyles['style']);
-                } elseif (isset($pStyles['borderStyle'])) { // Owen 2019-08-09 compatibility
+                if (isset($pStyles['borderStyle'])) {
                     $this->setBorderStyle($pStyles['borderStyle']);
+                } elseif (isset($pStyles['style'])) { // Owen 2019-08-09 compatibility
+                    trigger_error('Prefer borderStyle to style for Border applyFromArray', E_USER_WARNING);
+                    $this->setBorderStyle($pStyles['style']);
                 }
                 if (isset($pStyles['color'])) {
                     $this->getColor()->applyFromArray($pStyles['color']);
@@ -226,7 +227,7 @@ class PHPExcel_Style_Border extends PHPExcel_Style_Supervisor implements PHPExce
             $pValue = PHPExcel_Style_Border::BORDER_MEDIUM;
         }
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(array('style' => $pValue));
+            $styleArray = $this->getStyleArray(array('borderStyle' => $pValue)); // Owen 2020-02-10
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
             $this->borderStyle = $pValue;

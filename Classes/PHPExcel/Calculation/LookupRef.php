@@ -727,8 +727,14 @@ class PHPExcel_Calculation_LookupRef
                 (!is_numeric($lookup_value) && !is_numeric($rowData[$firstColumn]) && (strtolower($rowData[$firstColumn]) > strtolower($lookup_value)))) {
                 break;
             }
-            $rowNumber = $rowKey;
-            $rowValue = $rowData[$firstColumn];
+            // Owen 2019-12-23 remember the last key, but only if datatypes match
+            if ((is_numeric($lookup_value) && is_numeric($rowData[$firstColumn])) ||
+                (!is_numeric($lookup_value) && !is_numeric($rowData[$firstColumn]))) {
+                if ($not_exact_match) {
+                    $rowNumber = $rowKey;
+                    $rowValue = $rowData[$firstColumn];
+                }
+            }
         }
 
         if ($rowNumber !== false) {
@@ -771,7 +777,7 @@ class PHPExcel_Calculation_LookupRef
         } else {
             $f = array_keys($lookup_array);
             $firstRow = array_pop($f);
-            if ((!is_array($lookup_array[$firstRow])) || ($index_number > count($lookup_array[$firstRow]))) {
+            if ((!is_array($lookup_array[$firstRow])) || ($index_number > count($lookup_array))) { // Owen 2019-12-23
                 return PHPExcel_Calculation_Functions::REF();
             } else {
                 $columnKeys = array_keys($lookup_array[$firstRow]);

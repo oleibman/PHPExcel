@@ -1870,37 +1870,42 @@ class PHPExcel_Calculation_Financial
         $guess    = (is_null($guess))    ? 0.1    :    PHPExcel_Calculation_Functions::flattenSingleValue($guess);
 
         $rate = $guess;
-        if (abs($rate) < FINANCIAL_PRECISION) {
-            $y = $pv * (1 + $nper * $rate) + $pmt * (1 + $rate * $type) * $nper + $fv;
-        } else {
-            $f = exp($nper * log(1 + $rate));
-            $y = $pv * $f + $pmt * (1 / $rate + $type) * ($f - 1) + $fv;
-        }
-        $y0 = $pv + $pmt * $nper + $fv;
-        $y1 = $pv * $f + $pmt * (1 / $rate + $type) * ($f - 1) + $fv;
-
-        // find root by secant method
-        $i  = $x0 = 0.0;
-        $x1 = $rate;
-        while ((abs($y0 - $y1) > FINANCIAL_PRECISION) && ($i < FINANCIAL_MAX_ITERATIONS)) {
-            $rate = ($y1 * $x0 - $y0 * $x1) / ($y1 - $y0);
-            $x0 = $x1;
-            $x1 = $rate;
-            if (($nper * abs($pmt)) > ($pv - $fv)) {
-                $x1 = abs($x1);
+        // rest of code adapted from numpy/financial.py
+        $close = false;
+        $i = 0;
+        while (!$close && $i < FINANCIAL_MAX_ITERATIONS) {
+            $nextdiff = self::rate_next_guess($rate, $nper, $pmt, $pv, $fv, $type);
+            if (!is_numeric($nextdiff)) {
+                break;
             }
-            if (abs($rate) < FINANCIAL_PRECISION) {
-                $y = $pv * (1 + $nper * $rate) + $pmt * (1 + $rate * $type) * $nper + $fv;
-            } else {
-                $f = exp($nper * log(1 + $rate));
-                $y = $pv * $f + $pmt * (1 / $rate + $type) * ($f - 1) + $fv;
-            }
-
-            $y0 = $y1;
-            $y1 = $y;
+            $rate1 = $rate - $nextdiff;
+            //echo "$rate $rate1\n";
+            $close = (abs($rate1 - $rate) < FINANCIAL_PRECISION);
             ++$i;
+            $rate = $rate1;
         }
-        return $rate;
+        if ($close) {
+            return $rate;
+        }
+        return PHPExcel_Calculation_Functions::Nan();
+    }
+
+    private static function rate_next_guess($rate, $nper, $pmt, $pv, $fv, $type) {
+        if ($rate == 0) {
+            return PHPExcel_Calculation_Functions::NaN();
+        }
+        $t1 = pow($rate + 1, $nper);
+        $t2 = pow($rate + 1, $nper - 1);
+        $numerator = $fv + $t1 * $pv + $pmt * ($t1 - 1) * ($rate * $type + 1) / $rate;
+        $denominator = $nper * $t2 * $pv - $pmt * ($t1 - 1) * ($rate * $type + 1) / ($rate * $rate)
+             + $nper * $pmt * $t2 * ($rate * $type + 1) / $rate
+             + $pmt * ($t1 - 1) * $type / $rate
+            ;
+        if ($denominator == 0) {
+            return PHPExcel_Calculation_Functions::NaN();
+        }
+
+        return $numerator / $denominator;
     }
 
 
@@ -2156,22 +2161,25 @@ class PHPExcel_Calculation_Financial
         // create an initial range, with a root somewhere between 0 and guess
         $x1 = 0.0;
         $x2 = $guess;
-        $f1 = self::XNPV($x1, $values, $dates);
-        $f2 = self::XNPV($x2, $values, $dates);
+        $f1 = self::XNPV_ordered($x1, $values, $dates, false);
+        $f2 = self::XNPV_ordered($x2, $values, $dates, false);
         for ($i = 0; $i < FINANCIAL_MAX_ITERATIONS; ++$i) {
+            if (!is_numeric($f1) || !is_numeric($f2)) { // Owen 2019-12-21
+                return PHPExcel_Calculation_Functions::VALUE();
+            }
             if (($f1 * $f2) < 0.0) {
                 break;
             } elseif (abs($f1) < abs($f2)) {
-                $f1 = self::XNPV($x1 += 1.6 * ($x1 - $x2), $values, $dates);
+                $f1 = self::XNPV_ordered($x1 += 1.6 * ($x1 - $x2), $values, $dates, false);
             } else {
-                $f2 = self::XNPV($x2 += 1.6 * ($x2 - $x1), $values, $dates);
+                $f2 = self::XNPV_ordered($x2 += 1.6 * ($x2 - $x1), $values, $dates, false);
             }
         }
         if (($f1 * $f2) > 0.0) {
             return PHPExcel_Calculation_Functions::VALUE();
         }
 
-        $f = self::XNPV($x1, $values, $dates);
+        $f = self::XNPV_ordered($x1, $values, $dates, false);
         if ($f < 0.0) {
             $rtb = $x1;
             $dx = $x2 - $x1;
@@ -2183,7 +2191,7 @@ class PHPExcel_Calculation_Financial
         for ($i = 0; $i < FINANCIAL_MAX_ITERATIONS; ++$i) {
             $dx *= 0.5;
             $x_mid = $rtb + $dx;
-            $f_mid = self::XNPV($x_mid, $values, $dates);
+            $f_mid = self::XNPV_ordered($x_mid, $values, $dates, false);
             if ($f_mid <= 0.0) {
                 $rtb = $x_mid;
             }
@@ -2212,9 +2220,13 @@ class PHPExcel_Calculation_Financial
      * @param    array of mixed    $dates      A schedule of payment dates that corresponds to the cash flow payments.
      *                                         The first payment date indicates the beginning of the schedule of payments.
      *                                         All other dates must be later than this date, but they may occur in any order.
+     * @param     boolean $ordered true means first date must be earliest
      * @return    float
      */
-    public static function XNPV($rate, $values, $dates)
+    public static function XNPV($rate, $values, $dates) {
+        return self::XNPV_ordered($rate, $values, $dates, true);
+    }
+    private static function XNPV_ordered($rate, $values, $dates, $ordered = true)
     {
         $rate = PHPExcel_Calculation_Functions::flattenSingleValue($rate);
         if (!is_numeric($rate)) {
@@ -2238,7 +2250,28 @@ class PHPExcel_Calculation_Financial
             if (!is_numeric($values[$i])) {
                 return PHPExcel_Calculation_Functions::VALUE();
             }
-            $xnpv += $values[$i] / pow(1 + $rate, PHPExcel_Calculation_DateTime::DATEDIF($dates[0], $dates[$i], 'd') / 365);
+            // Owen 2019-12-21 start changes
+            $date0 = PHPExcel_Calculation_DateTime::getDateValue($dates[0]);
+            if (is_string($date0)) {
+                return PHPExcel_Calculation_Functions::VALUE();
+            }
+            $datei = PHPExcel_Calculation_DateTime::getDateValue($dates[$i]);
+            if (is_string($datei)) {
+                return PHPExcel_Calculation_Functions::VALUE();
+            }
+            if ($date0 > $datei) {
+                if ($ordered) {
+                    return PHPExcel_Calculation_Functions::NaN();
+                }
+                $dif = -PHPExcel_Calculation_DateTime::DATEDIF($datei, $date0, 'd');
+            } else {
+                $dif = PHPExcel_Calculation_DateTime::DATEDIF($date0, $datei, 'd');
+            }
+            if (!is_numeric($dif)) {
+                return PHPExcel_Calculation_Functions::VALUE();
+            }
+            $xnpv += $values[$i] / pow(1 + $rate, $dif / 365);
+            // Owen 2019-12-21 end changes
         }
         return (is_finite($xnpv)) ? $xnpv : PHPExcel_Calculation_Functions::VALUE();
     }
