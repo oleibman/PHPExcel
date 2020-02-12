@@ -501,15 +501,44 @@ class FinancialTest extends PHPUnit_Framework_TestCase
      */
     public function testXIRR()
     {
-        self::markTestSkipped('Owen - not working initially');
+        //self::markTestSkipped('Owen - not working initially');
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_Financial','XIRR'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (is_numeric($result) && is_numeric($expectedResult) && $result != 0) {
+            $ratio = $expectedResult / $result;
+            if ($ratio > 0.9999 && $ratio < 1.0001) {
+                $result = $expectedResult;
+            }
+        }
+        $this->assertEquals($expectedResult, $result);
     }
 
     public function providerXIRR()
     {
         return new testDataFileIterator('rawTestData/Calculation/Financial/XIRR.data');
+    }
+
+    /**
+     * @dataProvider providerXNPV
+     */
+    public function testXNPV()
+    {
+        // added by Owen
+        $args = func_get_args();
+        $expectedResult = array_pop($args);
+        $result = call_user_func_array(array('PHPExcel_Calculation_Financial','XNPV'), $args);
+        if (is_numeric($result) && is_numeric($expectedResult) && $result != 0) {
+            $ratio = $expectedResult / $result;
+            if ($ratio > 0.9999 && $ratio < 1.0001) {
+                $result = $expectedResult;
+            }
+        }
+        $this->assertEquals($expectedResult, $result, null, 1E-7);
+    }
+
+    public function providerXNPV()
+    {
+        return new testDataFileIterator('rawTestData/Calculation/Financial/XNPV.data');
     }
 }

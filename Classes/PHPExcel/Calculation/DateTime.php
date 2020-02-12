@@ -565,6 +565,12 @@ class PHPExcel_Calculation_DateTime
             if ($PHPDateArray['day'] == '') {
                 $PHPDateArray['day'] = strftime('%d');
             }
+            // Owen 2019-12-23 borrow next part from PhpSpreadsheet
+            if (!checkdate($PHPDateArray['month'], $PHPDateArray['day'], $PHPDateArray['year'])) {
+                if ($PHPDateArray['month'] != 2 || $PHPDateArray['day'] != 29 || $PHPDateArray['year'] != 1900) { // silly exception
+                    return PHPExcel_Calculation_Functions::VALUE();
+                }
+            }
             $excelDateValue = floor(
                 PHPExcel_Shared_Date::FormattedPHPToExcel(
                     $PHPDateArray['year'],
@@ -668,7 +674,7 @@ class PHPExcel_Calculation_DateTime
         }
 
         // Validate parameters
-        if ($startDate >= $endDate) {
+        if ($startDate > $endDate) { // Owen 2019-12-21
             return PHPExcel_Calculation_Functions::NaN();
         }
 
@@ -708,12 +714,11 @@ class PHPExcel_Calculation_DateTime
                 break;
             case 'MD':
                 if ($endDays < $startDays) {
+                    // Owen 2019-12-23 bring correct code from PhpSpreadsheet
                     $retVal = $endDays;
-                    $PHPEndDateObject->modify('-'.$endDays.' days');
+                    $PHPEndDateObject->modify('-' . $endDays . ' days');
                     $adjustDays = $PHPEndDateObject->format('j');
-                    if ($adjustDays > $startDays) {
-                        $retVal += ($adjustDays - $startDays);
-                    }
+                    $retVal += ($adjustDays - $startDays);
                 } else {
                     $retVal = $endDays - $startDays;
                 }
@@ -729,15 +734,27 @@ class PHPExcel_Calculation_DateTime
                 }
                 break;
             case 'YD':
-                $retVal = intval($difference);
+                // Owen 2019-12-23 bring correct code from PhpSpreadsheet
+                $retVal = (int) $difference;
                 if ($endYears > $startYears) {
-                    while ($endYears > $startYears) {
+                    $isLeapStartYear = $PHPStartDateObject->format('L');
+                    $wasLeapEndYear = $PHPEndDateObject->format('L');
+
+                    // Adjust end year to be as close as possible as start year
+                    while ($PHPEndDateObject >= $PHPStartDateObject) {
                         $PHPEndDateObject->modify('-1 year');
                         $endYears = $PHPEndDateObject->format('Y');
                     }
-                    $retVal = $PHPEndDateObject->format('z') - $PHPStartDateObject->format('z');
-                    if ($retVal < 0) {
-                        $retVal += 365;
+                    $PHPEndDateObject->modify('+1 year');
+
+                    // Get the result
+                    $retVal = $PHPEndDateObject->diff($PHPStartDateObject)->days;
+
+                    // Adjust for leap years cases
+                    $isLeapEndYear = $PHPEndDateObject->format('L');
+                    $limit = new \DateTime($PHPEndDateObject->format('Y-02-29'));
+                    if (!$isLeapStartYear && !$wasLeapEndYear && $isLeapEndYear && $PHPEndDateObject >= $limit) {
+                        --$retVal;
                     }
                 }
                 break;

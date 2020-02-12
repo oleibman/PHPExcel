@@ -454,16 +454,22 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
 
                     $sharedStrings = array();
                     $xpath = self::getArrayItem($relsWorkbook->xpath("rel:Relationship[@Type='http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings']"));
-                    $xmlStrings = simplexml_load_string($this->securityScan($this->getFromZipArchive($zip, "$dir/$xpath[Target]")), 'SimpleXMLElement', PHPExcel_Settings::getLibXmlLoaderOptions());  //~ http://schemas.openxmlformats.org/spreadsheetml/2006/main");
-                    if (isset($xmlStrings) && isset($xmlStrings->si)) {
-                        foreach ($xmlStrings->si as $val) {
-                            if (isset($val->t)) {
-                                $sharedStrings[] = PHPExcel_Shared_String::ControlCharacterOOXML2PHP((string) $val->t);
-                            } elseif (isset($val->r)) {
-                                $sharedStrings[] = $this->parseRichText($val);
+                    if ($xpath) { // Owen 2019-12-21 wrapped code below
+                        //~ http://schemas.openxmlformats.org/spreadsheetml/2006/main");
+                        $xmlStrings = simplexml_load_string(
+                            $this->securityScan($this->getFromZipArchive($zip, "$dir/$xpath[Target]")),
+                            'SimpleXMLElement',
+                            PHPExcel_Settings::getLibXmlLoaderOptions());
+                        if (isset($xmlStrings) && isset($xmlStrings->si)) {
+                            foreach ($xmlStrings->si as $val) {
+                                if (isset($val->t)) {
+                                    $sharedStrings[] = PHPExcel_Shared_String::ControlCharacterOOXML2PHP((string) $val->t);
+                                } elseif (isset($val->r)) {
+                                    $sharedStrings[] = $this->parseRichText($val);
+                                }
                             }
                         }
-                    }
+                    } // Owen 2019-11-21 end wrapped code
 
                     $worksheets = array();
                     $macros = $customUI = null;
@@ -1767,9 +1773,23 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
 //            if (isset($style->numFmt['formatCode'])) {
 //                $docStyle->getNumberFormat()->setFormatCode((string) $style->numFmt['formatCode']);
 //            } else {
-                $docStyle->getNumberFormat()->setFormatCode($style->numFmt);
+                  //$docStyle->getNumberFormat()->setFormatCode($style->numFmt);
 //            }
 //        }
+        $numfmtStyleXml = $style->numFmt; // Owen 2019-12-21 replace code above
+        if ($numfmtStyleXml instanceof SimpleXMLElement) {
+            $numfmtStyle = $docStyle->getNumberFormat();
+            $cnt = version_compare(PHP_VERSION, '5.3.0', '<') ? count($numfmtStyleXml->children()) : $numfmtStyleXml->count();
+            if ($cnt > 0) {
+                $numfmt = $numfmtStyleXml->attributes();
+                $cnt2 = version_compare(PHP_VERSION, '5.3.0', '<') ? count($numfmt->children()) : $numfmt->count();
+                if ($cnt2 > 0 && isset($numfmt['formatCode'])) {
+                    $numfmtStyle->setFormatCode((string) $numfmt['formatCode']);
+                }
+            }
+        } else {
+            $docStyle->getNumberFormat()->setFormatCode($numfmtStyleXml);
+        }
 
         // font
         if (isset($style->font)) {

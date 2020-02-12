@@ -278,7 +278,7 @@ class PHPExcel_Cell
                 //    We don't yet handle array returns
                 if (is_array($result)) {
                     while (is_array($result)) {
-                        $result = array_pop($result);
+                        $result = array_shift($result); // Owen 2020-01-16 was array_pop
                     }
                 }
             } catch (PHPExcel_Exception $ex) {
