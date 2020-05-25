@@ -159,6 +159,26 @@ class PHPExcel_Writer_HTML extends PHPExcel_Writer_Abstract implements PHPExcel_
      */
     public function save($pFilename = null)
     {
+        // Open file
+        $fileHandle = fopen($pFilename, 'wb+');
+        if ($fileHandle === false) {
+            throw new PHPExcel_Writer_Exception("Could not open file $pFilename for writing.");
+        }
+
+        // Write headers
+        fwrite($fileHandle, $this->generateHtmlAll());
+
+        // Close file
+        fclose($fileHandle);
+    }
+
+    /**
+     * Save Spreadsheet as html to variable.
+     *
+     * @return string
+     */
+    public function generateHtmlAll($pFilename = null)
+    {
         // garbage collect
         $this->phpExcel->garbageCollect();
 
@@ -169,32 +189,26 @@ class PHPExcel_Writer_HTML extends PHPExcel_Writer_Abstract implements PHPExcel_
 
         // Build CSS
         $this->buildCSS(!$this->useInlineCss);
-
-        // Open file
-        $fileHandle = fopen($pFilename, 'wb+');
-        if ($fileHandle === false) {
-            throw new PHPExcel_Writer_Exception("Could not open file $pFilename for writing.");
-        }
+        $html = '';
 
         // Write headers
-        fwrite($fileHandle, $this->generateHTMLHeader(!$this->useInlineCss));
+        $html .= $this->generateHTMLHeader(!$this->useInlineCss);
 
         // Write navigation (tabs)
         if ((!$this->isPdf) && ($this->generateSheetNavigationBlock)) {
-            fwrite($fileHandle, $this->generateNavigation());
+            $html .= $this->generateNavigation();
         }
 
         // Write data
-        fwrite($fileHandle, $this->generateSheetData());
+        $html .= $this->generateSheetData();
 
         // Write footer
-        fwrite($fileHandle, $this->generateHTMLFooter());
-
-        // Close file
-        fclose($fileHandle);
+        $html .= $this->generateHTMLFooter();
 
         PHPExcel_Calculation::setArrayReturnType($saveArrayReturnType);
         PHPExcel_Calculation::getInstance($this->phpExcel)->getDebugLog()->setWriteDebugLog($saveDebugLog);
+
+        return $html;
     }
 
     /**

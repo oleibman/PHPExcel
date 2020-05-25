@@ -125,13 +125,13 @@ class PHPExcel_Style_Color extends PHPExcel_Style_Supervisor implements PHPExcel
     {
         switch ($this->parentPropertyName) {
             case 'endColor':
-                $key = 'endcolor';
+                $key = 'endColor';
                 break;
             case 'color':
                 $key = 'color';
                 break;
             case 'startColor':
-                $key = 'startcolor';
+                $key = 'startColor';
                 break;
 
         }

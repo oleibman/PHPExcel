@@ -547,9 +547,9 @@ class PHPExcel_Reader_Gnumeric extends PHPExcel_Reader_Abstract implements PHPEx
                             $RGB = self::parseGnumericColour($styleAttributes["Back"]);
                             $shade = $styleAttributes["Shade"];
                             if (($RGB != '000000') || ($shade != '0')) {
-                                $styleArray['fill']['color']['rgb'] = $styleArray['fill']['startcolor']['rgb'] = $RGB;
+                                $styleArray['fill']['color']['rgb'] = $styleArray['fill']['startColor']['rgb'] = $RGB;
                                 $RGB2 = self::parseGnumericColour($styleAttributes["PatternColor"]);
-                                $styleArray['fill']['endcolor']['rgb'] = $RGB2;
+                                $styleArray['fill']['endColor']['rgb'] = $RGB2;
                                 switch ($shade) {
                                     case '1':
                                         $styleArray['fill']['type'] = PHPExcel_Style_Fill::FILL_SOLID;

@@ -248,7 +248,7 @@ class PHPExcel_Style extends PHPExcel_Style_Supervisor implements PHPExcel_IComp
                                 $pStyles['borders'][$component] = $pStyles['borders']['allBorders'];
                             }
                         }
-                        unset($pStyles['borders']['allborders']); // not needed any more
+                        unset($pStyles['borders']['allBorders']); // not needed any more
                     } elseif (isset($pStyles['borders']['allborders'])) {
                         trigger_error('Prefer allBorders to allborders for Style applyFromArray', E_USER_WARNING);
                         foreach (array('outline', 'inside') as $component) {
