@@ -55,14 +55,6 @@ abstract class PHPExcel_Writer_PDF_Core extends PHPExcel_Writer_HTML
      */
     protected $paperSize;
 
-
-    /**
-     * Temporary storage for Save Array Return type
-     *
-     * @var string
-     */
-    private $saveArrayReturnType;
-
     /**
      * Paper Sizes xRef List
      *
@@ -213,6 +205,8 @@ abstract class PHPExcel_Writer_PDF_Core extends PHPExcel_Writer_HTML
         parent::__construct($phpExcel);
         //$this->setUseInlineCss(true); // Owen 20180723
         $this->tempDir = PHPExcel_Shared_File::sys_get_temp_dir();
+        //  Set PDF
+        $this->isPdf = true;
     }
 
     /**
@@ -319,22 +313,11 @@ abstract class PHPExcel_Writer_PDF_Core extends PHPExcel_Writer_HTML
      */
     protected function prepareForSave($pFilename = null)
     {
-        //  garbage collect
-        $this->phpExcel->garbageCollect();
-
-        $this->saveArrayReturnType = PHPExcel_Calculation::getArrayReturnType();
-        PHPExcel_Calculation::setArrayReturnType(PHPExcel_Calculation::RETURN_ARRAY_AS_VALUE);
-
         //  Open file
         $fileHandle = fopen($pFilename, 'w');
         if ($fileHandle === false) {
             throw new PHPExcel_Writer_Exception("Could not open file $pFilename for writing.");
         }
-
-        //  Set PDF
-        $this->isPdf = true;
-        //  Build CSS
-        $this->buildCSS(true);
 
         return $fileHandle;
     }
@@ -349,7 +332,5 @@ abstract class PHPExcel_Writer_PDF_Core extends PHPExcel_Writer_HTML
     {
         //  Close file
         fclose($fileHandle);
-
-        PHPExcel_Calculation::setArrayReturnType($this->saveArrayReturnType);
     }
 }

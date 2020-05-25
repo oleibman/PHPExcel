@@ -44,6 +44,7 @@ class PHPExcel_Writer_PDF_tcPDF extends PHPExcel_Writer_PDF_Core implements PHPE
     public function __construct(PHPExcel $phpExcel)
     {
         parent::__construct($phpExcel);
+        $this->useInlineCss = true;
     }
 
     /**
@@ -102,11 +103,7 @@ class PHPExcel_Writer_PDF_tcPDF extends PHPExcel_Writer_PDF_Core implements PHPE
 
         //  Set the appropriate font
         $pdf->SetFont($this->getFont());
-        $pdf->writeHTML(
-            $this->generateHTMLHeader(true) . // Owen change from false
-            $this->generateSheetData() .
-            $this->generateHTMLFooter()
-        );
+        $pdf->writeHTML($this->generateHmtlAll());
 
         //  Document info
         $pdf->SetTitle($this->phpExcel->getProperties()->getTitle());
