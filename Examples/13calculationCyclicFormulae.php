@@ -50,7 +50,7 @@ $objPHPExcel->getActiveSheet()->setCellValue('A1', '=B1')
                               ->setCellValue('B1', '=A1+1')
                               ->setCellValue('B2', '=A2');
 
-PHPExcel_Calculation::getInstance($objPHPExcel)->cyclicFormulaCount = 100;
+PHPExcel_Calculation::getInstance($objPHPExcel)->cyclicFormulaCount = 15;
 
 // Calculated data
 echo date('H:i:s') , " Calculated data" , EOL;

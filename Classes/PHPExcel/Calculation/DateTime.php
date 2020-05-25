@@ -94,10 +94,6 @@ class PHPExcel_Calculation_DateTime
     public static function getDateValue($dateValue)
     {
         if (!is_numeric($dateValue)) {
-            if ((is_string($dateValue)) &&
-                (PHPExcel_Calculation_Functions::getCompatibilityMode() == PHPExcel_Calculation_Functions::COMPATIBILITY_GNUMERIC)) {
-                return PHPExcel_Calculation_Functions::VALUE();
-            }
             if ((is_object($dateValue)) && ($dateValue instanceof DateTime)) {
                 $dateValue = PHPExcel_Shared_Date::PHPToExcel($dateValue);
             } else {
@@ -764,6 +760,49 @@ class PHPExcel_Calculation_DateTime
         return $retVal;
     }
 
+    /**
+     * DAYS.
+     *
+     * Returns the number of days between two dates
+     *
+     * Excel Function:
+     *        DAYS(endDate, startDate)
+     *
+     * @param DateTimeImmutable|float|int|string $endDate Excel date serial value (float),
+     * PHP date timestamp (integer), PHP DateTime object, or a standard date string
+     * @param DateTimeImmutable|float|int|string $startDate Excel date serial value (float),
+     * PHP date timestamp (integer), PHP DateTime object, or a standard date string
+     *
+     * @return int|string Number of days between start date and end date or an error
+     */
+    public static function DAYS($endDate = 0, $startDate = 0)
+    {
+        $startDate = PHPExcel_Calculation_Functions::flattenSingleValue($startDate);
+        $endDate = PHPExcel_Calculation_Functions::flattenSingleValue($endDate);
+
+        $startDate = self::getDateValue($startDate);
+        if (is_string($startDate)) {
+            return PHPExcel_Calculation_Functions::VALUE();
+        }
+
+        $endDate = self::getDateValue($endDate);
+        if (is_string($endDate)) {
+            return PHPExcel_Calculation_Functions::VALUE();
+        }
+
+        // Execute function
+        $PHPStartDateObject = PHPExcel_Shared_Date::ExcelToPHPObject($startDate);
+        $PHPEndDateObject = PHPExcel_Shared_Date::ExcelToPHPObject($endDate);
+
+        $diff = $PHPStartDateObject->diff($PHPEndDateObject);
+        $days = $diff->days;
+
+        if ($diff->invert) {
+            $days = -$days;
+        }
+
+        return $days;
+    }
 
     /**
      * DAYS360

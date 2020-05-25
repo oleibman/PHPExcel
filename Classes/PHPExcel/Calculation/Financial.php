@@ -97,10 +97,6 @@ class PHPExcel_Calculation_Financial
         if (($frequency == 1) || ($frequency == 2) || ($frequency == 4)) {
             return true;
         }
-        if ((PHPExcel_Calculation_Functions::getCompatibilityMode() == PHPExcel_Calculation_Functions::COMPATIBILITY_GNUMERIC) &&
-            (($frequency == 6) || ($frequency == 12))) {
-            return true;
-        }
         return false;
     }
 
@@ -176,10 +172,6 @@ class PHPExcel_Calculation_Financial
      *                                        1    Annual
      *                                        2    Semi-Annual
      *                                        4    Quarterly
-     *                                    If working in Gnumeric Mode, the following frequency options are
-     *                                    also available
-     *                                        6    Bimonthly
-     *                                        12    Monthly
      * @param    integer    $basis            The type of day count to use.
      *                                        0 or omitted    US (NASD) 30/360
      *                                        1                Actual/actual
@@ -429,10 +421,6 @@ class PHPExcel_Calculation_Financial
      *                                        1    Annual
      *                                        2    Semi-Annual
      *                                        4    Quarterly
-     *                                    If working in Gnumeric Mode, the following frequency options are
-     *                                    also available
-     *                                        6    Bimonthly
-     *                                        12    Monthly
      * @param    integer        basis        The type of day count to use.
      *                                        0 or omitted    US (NASD) 30/360
      *                                        1                Actual/actual
@@ -464,6 +452,10 @@ class PHPExcel_Calculation_Financial
         $daysPerYear = self::daysPerYear(PHPExcel_Calculation_DateTime::YEAR($settlement), $basis);
         $prev = self::couponFirstPeriodDate($settlement, $maturity, $frequency, false);
 
+        if ($basis == 1) {
+            return abs(PHPExcel_Calculation_DateTime::DAYS($prev, $settlement));
+        }
+
         return PHPExcel_Calculation_DateTime::YEARFRAC($prev, $settlement, $basis) * $daysPerYear;
     }
 
@@ -488,10 +480,6 @@ class PHPExcel_Calculation_Financial
      *                                        1    Annual
      *                                        2    Semi-Annual
      *                                        4    Quarterly
-     *                                    If working in Gnumeric Mode, the following frequency options are
-     *                                    also available
-     *                                        6    Bimonthly
-     *                                        12    Monthly
      * @param    integer        basis        The type of day count to use.
      *                                        0 or omitted    US (NASD) 30/360
      *                                        1                Actual/actual
@@ -561,10 +549,6 @@ class PHPExcel_Calculation_Financial
      *                                        1    Annual
      *                                        2    Semi-Annual
      *                                        4    Quarterly
-     *                                    If working in Gnumeric Mode, the following frequency options are
-     *                                    also available
-     *                                        6    Bimonthly
-     *                                        12    Monthly
      * @param    integer        basis        The type of day count to use.
      *                                        0 or omitted    US (NASD) 30/360
      *                                        1                Actual/actual
@@ -620,10 +604,6 @@ class PHPExcel_Calculation_Financial
      *                                        1    Annual
      *                                        2    Semi-Annual
      *                                        4    Quarterly
-     *                                    If working in Gnumeric Mode, the following frequency options are
-     *                                    also available
-     *                                        6    Bimonthly
-     *                                        12    Monthly
      * @param    integer        basis        The type of day count to use.
      *                                        0 or omitted    US (NASD) 30/360
      *                                        1                Actual/actual
@@ -678,10 +658,6 @@ class PHPExcel_Calculation_Financial
      *                                        1    Annual
      *                                        2    Semi-Annual
      *                                        4    Quarterly
-     *                                    If working in Gnumeric Mode, the following frequency options are
-     *                                    also available
-     *                                        6    Bimonthly
-     *                                        12    Monthly
      * @param    integer        basis        The type of day count to use.
      *                                        0 or omitted    US (NASD) 30/360
      *                                        1                Actual/actual
@@ -710,22 +686,9 @@ class PHPExcel_Calculation_Financial
             return PHPExcel_Calculation_Functions::NaN();
         }
 
-        $settlement = self::couponFirstPeriodDate($settlement, $maturity, $frequency, true);
-        $daysBetweenSettlementAndMaturity = PHPExcel_Calculation_DateTime::YEARFRAC($settlement, $maturity, $basis) * 365;
+        $yearsBetweenSettlementAndMaturity = PHPExcel_Calculation_DateTime::YEARFRAC($settlement, $maturity, 0);
 
-        switch ($frequency) {
-            case 1: // annual payments
-                return ceil($daysBetweenSettlementAndMaturity / 360);
-            case 2: // half-yearly
-                return ceil($daysBetweenSettlementAndMaturity / 180);
-            case 4: // quarterly
-                return ceil($daysBetweenSettlementAndMaturity / 90);
-            case 6: // bimonthly
-                return ceil($daysBetweenSettlementAndMaturity / 60);
-            case 12: // monthly
-                return ceil($daysBetweenSettlementAndMaturity / 30);
-        }
-        return PHPExcel_Calculation_Functions::VALUE();
+        return ceil($yearsBetweenSettlementAndMaturity * $frequency);
     }
 
 
@@ -749,10 +712,6 @@ class PHPExcel_Calculation_Financial
      *                                        1    Annual
      *                                        2    Semi-Annual
      *                                        4    Quarterly
-     *                                    If working in Gnumeric Mode, the following frequency options are
-     *                                    also available
-     *                                        6    Bimonthly
-     *                                        12    Monthly
      * @param    integer        basis        The type of day count to use.
      *                                        0 or omitted    US (NASD) 30/360
      *                                        1                Actual/actual
@@ -934,6 +893,7 @@ class PHPExcel_Calculation_Financial
 
             //    Loop through each period calculating the depreciation
             $previousDepreciation = 0;
+            $depreciation = 0;
             for ($per = 1; $per <= $period; ++$per) {
                 if ($per == 1) {
                     $depreciation = $cost * $fixedDepreciationRate * $month / 12;
@@ -943,9 +903,6 @@ class PHPExcel_Calculation_Financial
                     $depreciation = ($cost - $previousDepreciation) * $fixedDepreciationRate;
                 }
                 $previousDepreciation += $depreciation;
-            }
-            if (PHPExcel_Calculation_Functions::getCompatibilityMode() == PHPExcel_Calculation_Functions::COMPATIBILITY_GNUMERIC) {
-                $depreciation = round($depreciation, 2);
             }
             return $depreciation;
         }
@@ -1000,12 +957,10 @@ class PHPExcel_Calculation_Financial
 
             //    Loop through each period calculating the depreciation
             $previousDepreciation = 0;
+            $depreciation = 0;
             for ($per = 1; $per <= $period; ++$per) {
                 $depreciation = min(($cost - $previousDepreciation) * ($factor / $life), ($cost - $salvage - $previousDepreciation));
                 $previousDepreciation += $depreciation;
-            }
-            if (PHPExcel_Calculation_Functions::getCompatibilityMode() == PHPExcel_Calculation_Functions::COMPATIBILITY_GNUMERIC) {
-                $depreciation = round($depreciation, 2);
             }
             return $depreciation;
         }
@@ -1645,23 +1600,54 @@ class PHPExcel_Calculation_Financial
         return $interestAndPrincipal[1];
     }
 
+    private static function validatePrice($settlement, $maturity, $rate, $yield, $redemption, $frequency, $basis)
+    {
+        if (is_string($settlement)) {
+            return PHPExcel_Calculation_Functions::VALUE();
+        }
+        if (is_string($maturity)) {
+            return PHPExcel_Calculation_Functions::VALUE();
+        }
+        if (!is_numeric($rate)) {
+            return PHPExcel_Calculation_Functions::VALUE();
+        }
+        if (!is_numeric($yield)) {
+            return PHPExcel_Calculation_Functions::VALUE();
+        }
+        if (!is_numeric($redemption)) {
+            return PHPExcel_Calculation_Functions::VALUE();
+        }
+        if (!is_numeric($frequency)) {
+            return PHPExcel_Calculation_Functions::VALUE();
+        }
+        if (!is_numeric($basis)) {
+            return PHPExcel_Calculation_Functions::VALUE();
+        }
+
+        return '';
+    }
 
     public static function PRICE($settlement, $maturity, $rate, $yield, $redemption, $frequency, $basis = 0)
     {
         $settlement    = PHPExcel_Calculation_Functions::flattenSingleValue($settlement);
         $maturity    = PHPExcel_Calculation_Functions::flattenSingleValue($maturity);
-        $rate        = (float) PHPExcel_Calculation_Functions::flattenSingleValue($rate);
-        $yield        = (float) PHPExcel_Calculation_Functions::flattenSingleValue($yield);
-        $redemption    = (float) PHPExcel_Calculation_Functions::flattenSingleValue($redemption);
-        $frequency    = (int) PHPExcel_Calculation_Functions::flattenSingleValue($frequency);
-        $basis        = (is_null($basis))    ? 0 :    (int) PHPExcel_Calculation_Functions::flattenSingleValue($basis);
+        $rate        = PHPExcel_Calculation_Functions::flattenSingleValue($rate);
+        $yield        = PHPExcel_Calculation_Functions::flattenSingleValue($yield);
+        $redemption    = PHPExcel_Calculation_Functions::flattenSingleValue($redemption);
+        $frequency    = PHPExcel_Calculation_Functions::flattenSingleValue($frequency);
+        $basis = PHPExcel_Calculation_Functions::flattenSingleValue($basis);
 
-        if (is_string($settlement = PHPExcel_Calculation_DateTime::getDateValue($settlement))) {
-            return PHPExcel_Calculation_Functions::VALUE();
+        $settlement = PHPExcel_Calculation_DateTime::getDateValue($settlement);
+        $maturity = PHPExcel_Calculation_DateTime::getDateValue($maturity);
+        $rslt = self::validatePrice($settlement, $maturity, $rate, $yield, $redemption, $frequency, $basis);
+        if ($rslt) {
+            return $rslt;
         }
-        if (is_string($maturity = PHPExcel_Calculation_DateTime::getDateValue($maturity))) {
-            return PHPExcel_Calculation_Functions::VALUE();
-        }
+        $rate = (float) $rate;
+        $yield = (float) $yield;
+        $redemption = (float) $redemption;
+        $frequency = (int) $frequency;
+        $basis = (int) $basis;
 
         if (($settlement > $maturity) ||
             (!self::isValidFrequency($frequency)) ||
@@ -1858,7 +1844,7 @@ class PHPExcel_Calculation_Financial
      *                                        1                At the beginning of the period.
      * @param    float    guess        Your guess for what the rate will be.
      *                                    If you omit guess, it is assumed to be 10 percent.
-     * @return    float
+     * @return    float|string
      **/
     public static function RATE($nper, $pmt, $pv, $fv = 0.0, $type = 0, $guess = 0.1)
     {
@@ -1870,7 +1856,7 @@ class PHPExcel_Calculation_Financial
         $guess    = (is_null($guess))    ? 0.1    :    PHPExcel_Calculation_Functions::flattenSingleValue($guess);
 
         $rate = $guess;
-        // rest of code adapted from numpy/financial.py
+        // Owen 2020-02-16 rest of code adapted from numpy/financial.py
         $close = false;
         $i = 0;
         while (!$close && $i < FINANCIAL_MAX_ITERATIONS) {
@@ -1879,7 +1865,6 @@ class PHPExcel_Calculation_Financial
                 break;
             }
             $rate1 = $rate - $nextdiff;
-            //echo "$rate $rate1\n";
             $close = (abs($rate1 - $rate) < FINANCIAL_PRECISION);
             ++$i;
             $rate = $rate1;
@@ -2145,41 +2130,58 @@ class PHPExcel_Calculation_Financial
         return PHPExcel_Calculation_Functions::VALUE();
     }
 
+    private static function bothNegAndPos($neg, $pos)
+    {
+        return $neg && $pos;
+    }
 
-    public static function XIRR($values, $dates, $guess = 0.1)
+    private static function xirrPart2(&$values)
+    {
+        $valCount = count($values);
+        $foundpos = false;
+        $foundneg = false;
+        for ($i = 0; $i < $valCount; ++$i) {
+            $fld = $values[$i];
+            if (!is_numeric($fld)) {
+                return PHPExcel_Calculation_Functions::VALUE();
+            } elseif ($fld > 0) {
+                $foundpos = true;
+            } elseif ($fld < 0) {
+                $foundneg = true;
+            }
+        }
+        if (!self::bothNegAndPos($foundneg, $foundpos)) {
+            return PHPExcel_Calculation_Functions::NAN();
+        }
+
+        return '';
+    }
+
+    private static function xirrPart1(&$values, &$dates)
     {
         if ((!is_array($values)) && (!is_array($dates))) {
-            return PHPExcel_Calculation_Functions::VALUE();
+            return PHPExcel_Calculation_Functions::NA();
         }
         $values = PHPExcel_Calculation_Functions::flattenArray($values);
-        $dates  = PHPExcel_Calculation_Functions::flattenArray($dates);
-        $guess  = PHPExcel_Calculation_Functions::flattenSingleValue($guess);
+        $dates = PHPExcel_Calculation_Functions::flattenArray($dates);
         if (count($values) != count($dates)) {
-            return PHPExcel_Calculation_Functions::NaN();
+            return PHPExcel_Calculation_Functions::NAN();
         }
 
-        // create an initial range, with a root somewhere between 0 and guess
-        $x1 = 0.0;
-        $x2 = $guess;
-        $f1 = self::XNPV_ordered($x1, $values, $dates, false);
-        $f2 = self::XNPV_ordered($x2, $values, $dates, false);
-        for ($i = 0; $i < FINANCIAL_MAX_ITERATIONS; ++$i) {
-            if (!is_numeric($f1) || !is_numeric($f2)) { // Owen 2019-12-21
+        $datesCount = count($dates);
+        for ($i = 0; $i < $datesCount; ++$i) {
+            $dates[$i] = PHPExcel_Calculation_DateTime::getDateValue($dates[$i]);
+            if (!is_numeric($dates[$i])) {
                 return PHPExcel_Calculation_Functions::VALUE();
             }
-            if (($f1 * $f2) < 0.0) {
-                break;
-            } elseif (abs($f1) < abs($f2)) {
-                $f1 = self::XNPV_ordered($x1 += 1.6 * ($x1 - $x2), $values, $dates, false);
-            } else {
-                $f2 = self::XNPV_ordered($x2 += 1.6 * ($x2 - $x1), $values, $dates, false);
-            }
-        }
-        if (($f1 * $f2) > 0.0) {
-            return PHPExcel_Calculation_Functions::VALUE();
         }
 
-        $f = self::XNPV_ordered($x1, $values, $dates, false);
+        return self::xirrPart2($values);
+    }
+
+    private static function xirrPart3($values, $dates, $x1, $x2)
+    {
+        $f = self::xnpvOrdered($x1, $values, $dates, false);
         if ($f < 0.0) {
             $rtb = $x1;
             $dx = $x2 - $x1;
@@ -2188,18 +2190,74 @@ class PHPExcel_Calculation_Financial
             $dx = $x1 - $x2;
         }
 
+        $rslt = PHPExcel_Calculation_Functions::VALUE();
         for ($i = 0; $i < FINANCIAL_MAX_ITERATIONS; ++$i) {
             $dx *= 0.5;
             $x_mid = $rtb + $dx;
-            $f_mid = self::XNPV_ordered($x_mid, $values, $dates, false);
+            $f_mid = self::xnpvOrdered($x_mid, $values, $dates, false);
             if ($f_mid <= 0.0) {
                 $rtb = $x_mid;
             }
             if ((abs($f_mid) < FINANCIAL_PRECISION) || (abs($dx) < FINANCIAL_PRECISION)) {
-                return $x_mid;
+                $rslt = $x_mid;
+
+                break;
             }
         }
-        return PHPExcel_Calculation_Functions::VALUE();
+
+        return $rslt;
+    }
+
+    /**
+     * XIRR.
+     *
+     * Returns the internal rate of return for a schedule of cash flows that is not necessarily periodic.
+     *
+     * Excel Function:
+     *        =XIRR(values,dates,guess)
+     *
+     * @param float[] $values     A series of cash flow payments
+     *                                The series of values must contain at least one positive value & one negative value
+     * @param mixed[] $dates      A series of payment dates
+     *                                The first payment date indicates the beginning of the schedule of payments
+     *                                All other dates must be later than this date, but they may occur in any order
+     * @param float $guess        An optional guess at the expected answer
+     *
+     * @return float|mixed|string
+     */
+    public static function XIRR($values, $dates, $guess = 0.1)
+    {
+        $rslt = self::xirrPart1($values, $dates);
+        if ($rslt) {
+            return $rslt;
+        }
+
+        // create an initial range, with a root somewhere between 0 and guess
+        $guess = PHPExcel_Calculation_Functions::flattenSingleValue($guess);
+        $x1 = 0.0;
+        $x2 = $guess ? $guess : 0.1;
+        $f1 = self::xnpvOrdered($x1, $values, $dates, false);
+        $f2 = self::xnpvOrdered($x2, $values, $dates, false);
+        $found = false;
+        for ($i = 0; $i < FINANCIAL_MAX_ITERATIONS; ++$i) {
+            if (!is_numeric($f1) || !is_numeric($f2)) {
+                break;
+            }
+            if (($f1 * $f2) < 0.0) {
+                $found = true;
+
+                break;
+            } elseif (abs($f1) < abs($f2)) {
+                $f1 = self::xnpvOrdered($x1 += 1.6 * ($x1 - $x2), $values, $dates, false);
+            } else {
+                $f2 = self::xnpvOrdered($x2 += 1.6 * ($x2 - $x1), $values, $dates, false);
+            }
+        }
+        if (!$found) {
+            return Functions::NAN();
+        }
+
+        return self::xirrPart3($values, $dates, $x1, $x2);
     }
 
 
@@ -2224,25 +2282,39 @@ class PHPExcel_Calculation_Financial
      * @return    float
      */
     public static function XNPV($rate, $values, $dates) {
-        return self::XNPV_ordered($rate, $values, $dates, true);
+        return self::xnpvOrdered($rate, $values, $dates, true);
     }
-    private static function XNPV_ordered($rate, $values, $dates, $ordered = true)
+
+    private static function validateXnpv($rate, $values, $dates)
     {
-        $rate = PHPExcel_Calculation_Functions::flattenSingleValue($rate);
         if (!is_numeric($rate)) {
             return PHPExcel_Calculation_Functions::VALUE();
         }
-        if ((!is_array($values)) || (!is_array($dates))) {
-            return PHPExcel_Calculation_Functions::VALUE();
-        }
-        $values    = PHPExcel_Calculation_Functions::flattenArray($values);
-        $dates    = PHPExcel_Calculation_Functions::flattenArray($dates);
         $valCount = count($values);
         if ($valCount != count($dates)) {
-            return PHPExcel_Calculation_Functions::NaN();
+            return PHPExcel_Calculation_Functions::NAN();
         }
-        if ((min($values) > 0) || (max($values) < 0)) {
+        if ($valCount > 1 && ((min($values) > 0) || (max($values) < 0))) {
+            return PHPExcel_Calculation_Functions::NAN();
+        }
+        $date0 = PHPExcel_Calculation_DateTime::getDateValue($dates[0]);
+        if (is_string($date0)) {
             return PHPExcel_Calculation_Functions::VALUE();
+        }
+
+        return '';
+    }
+
+    private static function xnpvOrdered($rate, $values, $dates, $ordered = true)
+    {
+        $rate = PHPExcel_Calculation_Functions::flattenSingleValue($rate);
+        $values = PHPExcel_Calculation_Functions::flattenArray($values);
+        $dates = PHPExcel_Calculation_Functions::flattenArray($dates);
+        $valCount = count($values);
+        $date0 = PHPExcel_Calculation_DateTime::getDateValue($dates[0]);
+        $rslt = self::validateXnpv($rate, $values, $dates);
+        if ($rslt) {
+            return $rslt;
         }
 
         $xnpv = 0.0;
@@ -2251,24 +2323,17 @@ class PHPExcel_Calculation_Financial
                 return PHPExcel_Calculation_Functions::VALUE();
             }
             // Owen 2019-12-21 start changes
-            $date0 = PHPExcel_Calculation_DateTime::getDateValue($dates[0]);
-            if (is_string($date0)) {
-                return PHPExcel_Calculation_Functions::VALUE();
-            }
             $datei = PHPExcel_Calculation_DateTime::getDateValue($dates[$i]);
             if (is_string($datei)) {
                 return PHPExcel_Calculation_Functions::VALUE();
             }
             if ($date0 > $datei) {
-                if ($ordered) {
-                    return PHPExcel_Calculation_Functions::NaN();
-                }
-                $dif = -PHPExcel_Calculation_DateTime::DATEDIF($datei, $date0, 'd');
+                $dif = $ordered ? PHPExcel_Calculation_Functions::NAN() : -PHPExcel_Calculation_DateTime::DATEDIF($datei, $date0, 'd');
             } else {
                 $dif = PHPExcel_Calculation_DateTime::DATEDIF($date0, $datei, 'd');
             }
             if (!is_numeric($dif)) {
-                return PHPExcel_Calculation_Functions::VALUE();
+                return $dif;
             }
             $xnpv += $values[$i] / pow(1 + $rate, $dif / 365);
             // Owen 2019-12-21 end changes
