@@ -178,7 +178,7 @@ echo date('H:i:s') , " Set thin black border outline around column" , EOL;
 $styleThinBlackBorderOutline = array(
 	'borders' => array(
 		'outline' => array(
-			'style' => PHPExcel_Style_Border::BORDER_THIN,
+			'borderStyle' => PHPExcel_Style_Border::BORDER_THIN,
 			'color' => array('argb' => 'FF000000'),
 		),
 	),
@@ -191,7 +191,7 @@ echo date('H:i:s') , " Set thick brown border outline around Total" , EOL;
 $styleThickBrownBorderOutline = array(
 	'borders' => array(
 		'outline' => array(
-			'style' => PHPExcel_Style_Border::BORDER_THICK,
+			'borderStyle' => PHPExcel_Style_Border::BORDER_THICK,
 			'color' => array('argb' => 'FF993300'),
 		),
 	),
@@ -215,16 +215,16 @@ $objPHPExcel->getActiveSheet()->getStyle('A3:E3')->applyFromArray(
 			),
 			'borders' => array(
 				'top'     => array(
- 					'style' => PHPExcel_Style_Border::BORDER_THIN
+ 					'borderStyle' => PHPExcel_Style_Border::BORDER_THIN
  				)
 			),
 			'fill' => array(
-	 			'type'       => PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR,
-	  			'rotation'   => 90,
-	 			'startcolor' => array(
+	 			'fillType'       => PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR,
+	  			'textRotation'   => 90,
+	 			'startColor' => array(
 	 				'argb' => 'FFA0A0A0'
 	 			),
-	 			'endcolor'   => array(
+	 			'endColor'   => array(
 	 				'argb' => 'FFFFFFFF'
 	 			)
 	 		)
@@ -238,7 +238,7 @@ $objPHPExcel->getActiveSheet()->getStyle('A3')->applyFromArray(
 			),
 			'borders' => array(
 				'left'     => array(
- 					'style' => PHPExcel_Style_Border::BORDER_THIN
+ 					'borderStyle' => PHPExcel_Style_Border::BORDER_THIN
  				)
 			)
 		)
@@ -256,7 +256,7 @@ $objPHPExcel->getActiveSheet()->getStyle('E3')->applyFromArray(
 		array(
 			'borders' => array(
 				'right'     => array(
- 					'style' => PHPExcel_Style_Border::BORDER_THIN
+ 					'borderStyle' => PHPExcel_Style_Border::BORDER_THIN
  				)
 			)
 		)

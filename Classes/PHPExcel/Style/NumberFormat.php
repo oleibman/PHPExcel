@@ -135,7 +135,7 @@ class PHPExcel_Style_NumberFormat extends PHPExcel_Style_Supervisor implements P
      */
     public function getStyleArray($array)
     {
-        return array('numberformat' => $array);
+        return array('numberFormat' => $array); // Owen 20200630
     }
 
     /**
