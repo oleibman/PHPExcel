@@ -125,20 +125,27 @@ class PHPExcel_Writer_HTML extends PHPExcel_Writer_Abstract implements PHPExcel_
      */
     private $generateSheetNavigationBlock = true;
 	
-	/**
-	 * If false, end for meta, img, br, and col tags should be '>'; if true ' />'
-	 * @static	boolean
-	 *
-	 */
-	private $usexhtml = false; # Owen added this and following method
-	/**
-	 * Generate xhtml or html?
-	 *
-	 * @param	boolean		$pxhtml
-	 */
-	public function useXHTML($pxhtml = true) {
-	  $this->usexhtml = $pxhtml;
-	}
+    /**
+     * If false, end for meta, img, br, and col tags should be '>'; if true ' />'
+     * @static	boolean
+     *
+     */
+    private $usexhtml = false; # Owen added this and following method
+    /**
+     * Generate xhtml or html?
+     *
+     * @param	boolean		$pxhtml
+     */
+    public function useXHTML($pxhtml = true) {
+        $this->usexhtml = $pxhtml;
+    }
+
+    private $editHtmlCallback; // Owen 20200630
+
+    public function setEditHtmlCallback($cbk) // Owen 20200630
+    {
+        $this->editHtmlCallback = $cbk;
+    }
 
     /**
      * Create a new PHPExcel_Writer_HTML
@@ -204,6 +211,11 @@ class PHPExcel_Writer_HTML extends PHPExcel_Writer_Abstract implements PHPExcel_
 
         // Write footer
         $html .= $this->generateHTMLFooter();
+
+        $callback = $this->editHtmlCallback; // Owen 20200630
+        if ($callback) {
+            $html = $callback($html);
+        }
 
         PHPExcel_Calculation::setArrayReturnType($saveArrayReturnType);
         PHPExcel_Calculation::getInstance($this->phpExcel)->getDebugLog()->setWriteDebugLog($saveDebugLog);
