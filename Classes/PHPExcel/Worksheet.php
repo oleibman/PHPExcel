@@ -1468,13 +1468,14 @@ class PHPExcel_Worksheet implements PHPExcel_IComparable
     }
 
     /**
-     * Set conditional styles
+     * Set conditional styles.
      *
-     * @param $pCoordinate string E.g. 'A1'
-     * @param $pValue PHPExcel_Style_Conditional[]
-     * @return PHPExcel_Worksheet
+     * @param string $pCoordinate eg: 'A1'
+     * @param PHPExcel_Style_Conditional[] $pValue
+     *
+     * @return Worksheet
      */
-    public function setConditionalStyles($pCoordinate = 'A1', $pValue)
+    public function setConditionalStyles($pCoordinate, $pValue) // Owen 20200917 change Docblock remove default
     {
         $this->conditionalStylesCollection[strtoupper($pCoordinate)] = $pValue;
         return $this;
