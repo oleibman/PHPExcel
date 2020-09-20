@@ -5,7 +5,7 @@ class RowIteratorTest extends PHPUnit_Framework_TestCase
     public $mockWorksheet;
     public $mockRow;
 
-    public function setUp()
+    protected function setUp(): void
     {
         if (!defined('PHPEXCEL_ROOT')) {
             define('PHPEXCEL_ROOT', APPLICATION_PATH . '/');
@@ -63,28 +63,22 @@ class RowIteratorTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    /**
-     * @expectedException PHPExcel_Exception
-     */
     public function testStartOutOfRange()
     {
+        $this->expectException(PHPExcel_Exception::class);
         $iterator = new PHPExcel_Worksheet_RowIterator($this->mockWorksheet, 256, 512);
     }
 
-    /**
-     * @expectedException PHPExcel_Exception
-     */
     public function testSeekOutOfRange()
     {
+        $this->expectException(PHPExcel_Exception::class);
         $iterator = new PHPExcel_Worksheet_RowIterator($this->mockWorksheet, 2, 4);
         $iterator->seek(1);
     }
 
-    /**
-     * @expectedException PHPExcel_Exception
-     */
     public function testPrevOutOfRange()
     {
+        $this->expectException(PHPExcel_Exception::class);
         $iterator = new PHPExcel_Worksheet_RowIterator($this->mockWorksheet, 2, 4);
         $iterator->prev();
     }

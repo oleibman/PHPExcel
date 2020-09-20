@@ -1,32 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<phpunit bootstrap="./bootstrap.php"
-    backupGlobals="true"
-    colors="true" 
-    convertErrorsToExceptions="true" 
-    convertNoticesToExceptions="true" 
-    convertWarningsToExceptions="true" 
-    processIsolation="false" 
-    syntaxCheck="true" 
-    verbose="true" 
-    strict="true"
-    stopOnError="false"
-    stopOnFailure="false"
-    stopOnIncomplete="false"
-    stopOnSkipped="false">
-    <php>
-        <ini name="memory_limit" value="2048M"/>
-    </php>
-    <testsuite name="PHPExcel Unit Test Suite">
-        <directory suffix="Test.php">./Classes</directory>
-    </testsuite>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">../Classes</directory>
-            <exclude>
-                <directory>../Classes/PHPExcel/Shared/PCLZip</directory>
-                <directory>../Classes/PHPExcel/Shared/JAMA</directory>
-                <directory>../Classes/PHPExcel/Writer/PDF</directory>
-            </exclude>
-        </whitelist>
-    </filter>
-</phpunit> 
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  bootstrap="./bootstrap.php"
+  backupGlobals="true"
+  cacheResult="false"
+  colors="true"
+  convertErrorsToExceptions="true"
+  convertNoticesToExceptions="true"
+  convertWarningsToExceptions="true"
+  processIsolation="false"
+  verbose="true"
+  stopOnError="false"
+  stopOnFailure="false"
+  stopOnIncomplete="false"
+  stopOnSkipped="false"
+  xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+>
+  <coverage>
+    <include>
+      <directory suffix=".php">./Classes</directory>
+    </include>
+    <exclude>
+      <directory>./Classes/PHPExcel/Shared/PCLZip</directory>
+      <directory>./Classes/PHPExcel/Shared/JAMA</directory>
+      <directory>./Classes/PHPExcel/Writer/PDF</directory>
+    </exclude>
+  </coverage>
+  <php>
+    <ini name="memory_limit" value="2048M"/>
+  </php>
+  <testsuite name="PHPExcel Unit Test Suite">
+    <directory suffix="Test.php">./Classes</directory>
+  </testsuite>
+</phpunit>

@@ -6,7 +6,7 @@ require_once 'testDataFileIterator.php';
 class DateTimeTest extends PHPUnit_Framework_TestCase
 {
 
-    public function setUp()
+    protected function setUp(): void
     {
         if (!defined('PHPEXCEL_ROOT')) {
             define('PHPEXCEL_ROOT', APPLICATION_PATH . '/');
@@ -24,7 +24,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'DATE'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerDATE()
@@ -37,7 +41,12 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_PHP_NUMERIC);
         $result = PHPExcel_Calculation_DateTime::DATE(2012, 1, 31);
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_EXCEL);
-        $this->assertEquals(1327968000, $result, null, 1E-8);
+        $expectedResult = 1327968000;
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function testDATEtoPHPObject()
@@ -77,7 +86,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'DATEVALUE'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerDATEVALUE()
@@ -90,7 +103,12 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_PHP_NUMERIC);
         $result = PHPExcel_Calculation_DateTime::DATEVALUE('2012-1-31');
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_EXCEL);
-        $this->assertEquals(1327968000, $result, null, 1E-8);
+        $expectedResult = 1327968000;
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function testDATEVALUEtoPHPObject()
@@ -114,7 +132,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'YEAR'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerYEAR()
@@ -130,7 +152,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'MONTHOFYEAR'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerMONTH()
@@ -146,7 +172,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'WEEKOFYEAR'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerWEEKNUM()
@@ -162,7 +192,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'DAYOFWEEK'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerWEEKDAY()
@@ -178,7 +212,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'DAYOFMONTH'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerDAY()
@@ -194,7 +232,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'TIME'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerTIME()
@@ -207,7 +249,12 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_PHP_NUMERIC);
         $result = PHPExcel_Calculation_DateTime::TIME(7, 30, 20);
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_EXCEL);
-        $this->assertEquals(27020, $result, null, 1E-8);
+        $expectedResult = 27020;
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function testTIMEtoPHPObject()
@@ -231,7 +278,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'TIMEVALUE'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerTIMEVALUE()
@@ -244,7 +295,12 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_PHP_NUMERIC);
         $result = PHPExcel_Calculation_DateTime::TIMEVALUE('7:30:20');
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_EXCEL);
-        $this->assertEquals(23420, $result, null, 1E-8);
+        $expectedResult = 23420;
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function testTIMEVALUEtoPHPObject()
@@ -268,7 +324,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'HOUROFDAY'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerHOUR()
@@ -284,7 +344,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'MINUTEOFHOUR'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerMINUTE()
@@ -300,7 +364,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'SECONDOFMINUTE'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerSECOND()
@@ -316,7 +384,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'NETWORKDAYS'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerNETWORKDAYS()
@@ -332,7 +404,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'WORKDAY'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerWORKDAY()
@@ -348,7 +424,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'EDATE'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerEDATE()
@@ -361,7 +441,12 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_PHP_NUMERIC);
         $result = PHPExcel_Calculation_DateTime::EDATE('2012-1-26', -1);
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_EXCEL);
-        $this->assertEquals(1324857600, $result, null, 1E-8);
+        $expectedResult = 1324857600;
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function testEDATEtoPHPObject()
@@ -385,7 +470,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'EOMONTH'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerEOMONTH()
@@ -398,7 +487,12 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_PHP_NUMERIC);
         $result = PHPExcel_Calculation_DateTime::EOMONTH('2012-1-26', -1);
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_EXCEL);
-        $this->assertEquals(1325289600, $result, null, 1E-8);
+        $expectedResult = 1325289600;
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function testEOMONTHtoPHPObject()
@@ -422,7 +516,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'DATEDIF'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerDATEDIF()
@@ -438,7 +536,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'DAYS360'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerDAYS360()
@@ -454,7 +556,11 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'YEARFRAC'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerYEARFRAC()

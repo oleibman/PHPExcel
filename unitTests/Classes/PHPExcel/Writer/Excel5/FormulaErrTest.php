@@ -15,7 +15,7 @@ class FormulaErrTest extends TestCase
         return self::FILENAM . '.' . strtolower(self::TYP);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         $out = self::getfilename();
         if (file_exists($out)) {

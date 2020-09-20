@@ -8,7 +8,7 @@ class StringTest extends PHPUnit_Framework_TestCase
 
     private $thou;
 
-    public function setUp()
+    protected function setUp(): void
     {
         if (!defined('PHPEXCEL_ROOT')) {
             define('PHPEXCEL_ROOT', APPLICATION_PATH . '/');
@@ -17,7 +17,7 @@ class StringTest extends PHPUnit_Framework_TestCase
         $this->thou = PHPExcel_Shared_String::getThousandsSeparator();
     }
 
-    public function TearDown()
+    protected function TearDown(): void
     {
         PHPExcel_Shared_String::setThousandsSeparator($this->thou);
     }
