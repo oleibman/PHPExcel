@@ -85,7 +85,7 @@ class PHPExcel_ReferenceHelper
      */
     public static function columnReverseSort($a, $b)
     {
-        return 1 - strcasecmp(strlen($a) . $a, strlen($b) . $b);
+        return -strcasecmp(strlen($a) . $a, strlen($b) . $b); // Owen 20200919 breaks in PHP8 needs to be propagated to PhpSpreadsheet
     }
 
     /**
