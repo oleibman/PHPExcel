@@ -7,7 +7,7 @@ class RuleTest extends PHPUnit_Framework_TestCase
 
     private $_mockAutoFilterColumnObject;
 
-    public function setUp()
+    protected function setUp(): void
     {
         if (!defined('PHPEXCEL_ROOT')) {
             define('PHPEXCEL_ROOT', APPLICATION_PATH . '/');

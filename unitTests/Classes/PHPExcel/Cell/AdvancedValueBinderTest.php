@@ -4,7 +4,7 @@ class AdvancedValueBinderTest extends PHPUnit_Framework_TestCase
 {
     private $thou, $curr, $decm;
 
-    public function setUp()
+    protected function setUp(): void
     {
         if (!defined('PHPEXCEL_ROOT')) {
             define('PHPEXCEL_ROOT', APPLICATION_PATH . '/');
@@ -15,7 +15,7 @@ class AdvancedValueBinderTest extends PHPUnit_Framework_TestCase
         $this->thou = PHPExcel_Shared_String::getThousandsSeparator();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         PHPExcel_Shared_String::setCurrencyCode($this->curr);
         PHPExcel_Shared_String::setDecimalSeparator($this->decm);

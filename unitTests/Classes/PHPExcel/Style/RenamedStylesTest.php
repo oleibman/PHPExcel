@@ -2,7 +2,7 @@
 class RenamedStylesTest extends PHPUnit_Framework_TestCase
 {
 
-    public function setUp()
+    protected function setUp(): void
     {
         if (!defined('PHPEXCEL_ROOT')) {
             define('PHPEXCEL_ROOT', APPLICATION_PATH . '/');
@@ -31,8 +31,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testArrayBorderStyle2()
     {
-        //self::expectException(\PHPUnit\Framework\Error\Warning::class);
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expected = PHPExcel_Style_Border::BORDER_DOTTED;
@@ -87,7 +90,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testNumberFormatStyle2()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expected = PHPExcel_Style_NumberFormat::FORMAT_NUMBER_00;
@@ -102,7 +109,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testNumberFormatStyle3()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expected = PHPExcel_Style_NumberFormat::FORMAT_NUMBER_00;
@@ -117,7 +128,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testNumberFormatStyle4()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expected = PHPExcel_Style_NumberFormat::FORMAT_NUMBER_00;
@@ -132,7 +147,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testAlignmentStyle1()
     {
-        //self::expectException('PHPUnit\\Framework\\Error\\Warning');
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expectedrot = 5;
@@ -155,7 +169,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testAlignmentStyle2()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expectedrot = 5;
@@ -178,7 +196,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testAlignmentStyle3()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expectedrot = 5;
@@ -201,7 +223,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testAlignmentStyle4()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expectedrot = 5;
@@ -224,7 +250,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFontStyle1()
     {
-        //self::expectException('PHPUnit\\Framework\\Error\\Warning');
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $styleFont1 = array(
@@ -256,7 +281,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFontStyle2()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $styleFont1 = array(
@@ -288,7 +317,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFontStyle3()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $styleFont1 = array(
@@ -320,7 +353,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFontStyle4()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $styleFont1 = array(
@@ -352,7 +389,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFillStyle1()
     {
-        //self::expectException('PHPUnit\\Framework\\Error\\Warning');
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $ftype = PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR;
@@ -380,7 +416,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFillStyle2()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $ftype = PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR;
@@ -408,7 +448,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFillStyle3()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $ftype = PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR;
@@ -436,7 +480,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFillStyle4()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $ftype = PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR;
@@ -464,7 +512,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testBordersStyle1()
     {
-        //self::expectException('PHPUnit\\Framework\\Error\\Warning');
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $dtype = PHPExcel_Style_Borders::DIAGONAL_BOTH;
@@ -486,7 +533,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testBordersStyle2()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $dtype = PHPExcel_Style_Borders::DIAGONAL_BOTH;
@@ -508,7 +559,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testBordersStyle3()
     {
-        self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        if (method_exists($this, 'expectWarning')) {
+            $this->expectWarning();
+        } else {
+            self::expectException('PHPUnit\\Framework\\Error\\Warning');
+        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $dtype = PHPExcel_Style_Borders::DIAGONAL_BOTH;

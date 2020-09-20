@@ -29,7 +29,7 @@ class Xlsx2Test extends TestCase
         return self::FILENAM . "2.$typ";
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         $out = self::outputfilename();
         if (file_exists($out)) {

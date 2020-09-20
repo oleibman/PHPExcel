@@ -8,7 +8,7 @@ class TextDataTest extends PHPUnit_Framework_TestCase
 
     private $thou, $curr, $decm;
 
-    public function setUp()
+    protected function setUp(): void
     {
         if (!defined('PHPEXCEL_ROOT')) {
             define('PHPEXCEL_ROOT', APPLICATION_PATH . '/');
@@ -21,7 +21,7 @@ class TextDataTest extends PHPUnit_Framework_TestCase
         $this->decm = PHPExcel_Shared_String::getDecimalSeparator();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         PHPExcel_Shared_String::setThousandsSeparator($this->thou);
         PHPExcel_Shared_String::setCurrencyCode($this->curr);
@@ -365,7 +365,11 @@ class TextDataTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_TextData', 'VALUE'), $args);
-        $this->assertEquals($expectedResult, $result, null, 1E-8);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
     }
 
     public function providerVALUE()
