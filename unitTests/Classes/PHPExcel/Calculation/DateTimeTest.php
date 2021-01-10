@@ -98,6 +98,28 @@ class DateTimeTest extends PHPUnit_Framework_TestCase
         return new testDataFileIterator('rawTestData/Calculation/DateTime/DATEVALUE.data');
     }
 
+    /**
+     * @dataProvider providerDATEVALUE2
+     */
+    public function testDATEVALUE2()
+    {
+        $args = func_get_args();
+        $curryear = date('Y');
+        $expectedResult = $curryear . array_pop($args);
+        $expectedResult = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'DATEVALUE'), array($expectedResult));
+        $result = call_user_func_array(array('PHPExcel_Calculation_DateTime', 'DATEVALUE'), $args);
+        if (method_exists($this, 'assertEqualsWithDelta')) {
+            $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
+        } else {
+            $this->assertEquals($expectedResult, $result, null, 1E-8);
+        }
+    }
+
+    public function providerDATEVALUE2()
+    {
+        return new testDataFileIterator('rawTestData/Calculation/DateTime/DATEVALUE2.data');
+    }
+
     public function testDATEVALUEtoPHP()
     {
         PHPExcel_Calculation_Functions::setReturnDateType(PHPExcel_Calculation_Functions::RETURNDATE_PHP_NUMERIC);
