@@ -35,12 +35,6 @@
 "22 August 98",			36029
 "1st March 2007",		39142		//	MS Excel will fail with a #VALUE return, but PHPExcel can parse this date
 "The 1st day of March 2007",	"#VALUE!"
-# Owen The following 5 tests need to be adjusted year by year - valid for 2019
-"1 Jan",			44197 // set for 2021
-"31/12",			44561 // set for 2021
-"12/31",			44561 // set for 2021		//	might depend on regional settings - Excel reads as 1st December 1931, not 31st December in current year
-"5-JUL",			44382 // set for 2021
-"5 Jul",			44382 // set for 2021
 "12/2008",			39783
 "10/32",			11963
 11,				"#VALUE!"

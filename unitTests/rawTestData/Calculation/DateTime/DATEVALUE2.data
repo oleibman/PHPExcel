@@ -1,0 +1,6 @@
+# Date String			-MM-DD (year will be treated as current year)
+"1 Jan",			"-01-01"
+"31/12",			"-12-31"
+"12/31",			"-12-31"		//	might depend on regional settings - Excel reads as 1st December 1931, not 31st December in current year
+"5-JUL",			"-07-05"
+"5 Jul",			"-07-05"
