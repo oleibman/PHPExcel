@@ -1348,6 +1348,7 @@ class PHPExcel_Writer_HTML extends PHPExcel_Writer_Abstract implements PHPExcel_
                                 array($this, 'formatColor')
                             );
                         }
+                        if ($cellData === null) $cellData = ''; // Owen 2021-07-03
                         $cellData = htmlspecialchars($cellData);
                         if ($pSheet->getParent()->getCellXfByIndex($cell->getXfIndex())->getFont()->getSuperScript()) {
                             $cellData = '<sup>'.$cellData.'</sup>';

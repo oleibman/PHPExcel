@@ -52,10 +52,11 @@ class PHPExcel_Shared_TimeZone
      */
     public static function _validateTimeZone($timezone)
     {
-        if (in_array($timezone, DateTimeZone::listIdentifiers())) {
-            return true;
+        // Owen 2021-07-03 replace
+        if (defined(DateTimeZone::ALL_WITH_BC)) {
+            return in_array($timezone, DateTimeZone::listIdentifiers(DateTimeZone::ALL_WITH_BC));
         }
-        return false;
+        return in_array($timezone, DateTimeZone::listIdentifiers());
     }
 
     /**
@@ -127,18 +128,10 @@ class PHPExcel_Shared_TimeZone
         } else {
             $timezone = self::$timezone;
         }
-
-        if ($timezone == 'UST') {
-            return 0;
-        }
-
+        // Owen 2021-07-03 replace rest
         $objTimezone = new DateTimeZone($timezone);
-        if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-            $transitions = $objTimezone->getTransitions($timestamp, $timestamp);
-        } else {
-            $transitions = self::getTimezoneTransitions($objTimezone, $timestamp);
-        }
-
-        return (count($transitions) > 0) ? $transitions[0]['offset'] : 0;
+        $dtobj = DateTime::createFromFormat('U', $timestamp);
+        $dtobj->setTimeZone($objTimezone);
+        return $dtobj->getoffset();
     }
 }
