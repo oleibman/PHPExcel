@@ -255,6 +255,7 @@ class PHPExcel_Shared_Font
         if ($cellText instanceof PHPExcel_RichText) {
             $cellText = $cellText->getPlainText();
         }
+        if ($cellText === null) $cellText = ''; // Owen 2021-07-03
 
         // Special case if there are one or more newline characters ("\n")
         if (strpos($cellText, "\n") !== false) {

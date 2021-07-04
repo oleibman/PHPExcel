@@ -555,6 +555,7 @@ class PHPExcel_Shared_String
      */
     public static function CountCharacters($value, $enc = 'UTF-8')
     {
+        if ($value === null) $value = ''; // Owen 2021-07-03
         if (self::getIsMbstringEnabled()) {
             return mb_strlen($value, $enc);
         }

@@ -483,15 +483,13 @@ class PHPExcel_Shared_OLE
         // Make HEX string
         $res = '';
 
-        for ($i = 0; $i < 4; ++$i) {
-            $hex = $low_part % 0x100;
-            $res .= pack('c', $hex);
-            $low_part /= 0x100;
-        }
-        for ($i = 0; $i < 4; ++$i) {
-            $hex = $high_part % 0x100;
-            $res .= pack('c', $hex);
-            $high_part /= 0x100;
+        // Owen 2021-07-03 replace rest
+        $factor = 2 ** 56;
+        while ($factor >= 1) {
+            $hex = (int) floor($big_date / $factor);
+            $res = pack('c', $hex) . $res;
+            $big_date = fmod($big_date, $factor);
+            $factor /= 256;
         }
         return $res;
     }
