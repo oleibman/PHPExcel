@@ -2254,7 +2254,7 @@ class PHPExcel_Calculation_Financial
             }
         }
         if (!$found) {
-            return Functions::NAN();
+            return PHPExcel_Calculation_Functions::NAN(); // Owen 2021-12-27
         }
 
         return self::xirrPart3($values, $dates, $x1, $x2);
