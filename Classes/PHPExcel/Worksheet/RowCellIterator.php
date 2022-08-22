@@ -27,6 +27,7 @@
  */
 class PHPExcel_Worksheet_RowCellIterator extends PHPExcel_Worksheet_CellIterator implements Iterator
 {
+    // Owen 20220822 add #[\ReturnTypeWillChange]
     /**
      * Row index
      *
@@ -113,6 +114,7 @@ class PHPExcel_Worksheet_RowCellIterator extends PHPExcel_Worksheet_CellIterator
      * @return PHPExcel_Worksheet_RowCellIterator
      * @throws PHPExcel_Exception
      */
+    #[\ReturnTypeWillChange]
     public function seek($column = 'A')
     {
         $column = PHPExcel_Cell::columnIndexFromString($column) - 1;
@@ -129,6 +131,7 @@ class PHPExcel_Worksheet_RowCellIterator extends PHPExcel_Worksheet_CellIterator
     /**
      * Rewind the iterator to the starting column
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->position = $this->startColumn;
@@ -139,6 +142,7 @@ class PHPExcel_Worksheet_RowCellIterator extends PHPExcel_Worksheet_CellIterator
      *
      * @return PHPExcel_Cell
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->subject->getCellByColumnAndRow($this->position, $this->rowIndex);
@@ -149,6 +153,7 @@ class PHPExcel_Worksheet_RowCellIterator extends PHPExcel_Worksheet_CellIterator
      *
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return PHPExcel_Cell::stringFromColumnIndex($this->position);
@@ -157,6 +162,7 @@ class PHPExcel_Worksheet_RowCellIterator extends PHPExcel_Worksheet_CellIterator
     /**
      * Set the iterator to its next value
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         do {
@@ -171,6 +177,7 @@ class PHPExcel_Worksheet_RowCellIterator extends PHPExcel_Worksheet_CellIterator
      *
      * @throws PHPExcel_Exception
      */
+    #[\ReturnTypeWillChange]
     public function prev()
     {
         if ($this->position <= $this->startColumn) {
@@ -193,6 +200,7 @@ class PHPExcel_Worksheet_RowCellIterator extends PHPExcel_Worksheet_CellIterator
      *
      * @return boolean
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->position <= $this->endColumn;

@@ -852,7 +852,7 @@ class PHPExcel_Calculation_Engineering
                 return PHPExcel_Calculation_Functions::VALUE();
             }
             if (strlen($xVal) <= $places) {
-                return substr(str_pad($xVal, $places, '0', STR_PAD_LEFT), -10);
+                return substr(str_pad($xVal, (int) $places, '0', STR_PAD_LEFT), -10); // Owen 20220822
             } else {
                 return PHPExcel_Calculation_Functions::NaN();
             }

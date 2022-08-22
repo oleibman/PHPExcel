@@ -3524,7 +3524,7 @@ class PHPExcel_Calculation
             $token = $tokenData['value'];
 //            echo '<b>Token is '.$token.'</b><br />';
             // if the token is a binary operator, pop the top two values off the stack, do the operation, and push the result back on the stack
-            if (isset(self::$binaryOperators[$token])) {
+            if (isset(self::$binaryOperators[is_float($token) ? ((int) $token) :$token])) { // Owen 20220822
 //                echo 'Token is a binary operator<br />';
                 //    We must have two operands, error if we don't
                 if (($operand2Data = $stack->pop()) === null) {

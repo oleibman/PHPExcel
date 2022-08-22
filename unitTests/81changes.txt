@@ -1,0 +1,11 @@
+In \git\Excel, changed:
+  unitTests\testDataFileIterator.php
+  Calculation.php line 3527
+  WorksheetIterator.php
+  Worksheet\ColumnCellIterator.php
+  Worksheet\RowCellIterator.php
+  unitTests\custom\Complex.php line 78
+  Calculation\Functions.php lines 440 460
+  Calculation\TextData.php lines 356 358 386 388 413 436
+  Cell.php line 845 619
+  Style\Color.php lines 336 337 338
