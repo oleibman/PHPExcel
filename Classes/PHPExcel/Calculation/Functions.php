@@ -437,7 +437,7 @@ class PHPExcel_Calculation_Functions
             return self::VALUE();
         }
 
-        return ($value % 2 == 0);
+        return (((int) $value) % 2 == 0); // Owen 20220822
     }
 
 
@@ -457,7 +457,7 @@ class PHPExcel_Calculation_Functions
             return self::VALUE();
         }
 
-        return (abs($value) % 2 == 1);
+        return (abs((int) $value) % 2 == 1); // Owen 20220822
     }
 
 

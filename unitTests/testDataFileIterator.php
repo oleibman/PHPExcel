@@ -16,6 +16,7 @@ class testDataFileIterator implements Iterator
         fclose($this->file);
     }
 
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         rewind($this->file);
@@ -23,21 +24,25 @@ class testDataFileIterator implements Iterator
         $this->key = 0;
     }
 
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return !feof($this->file);
     }
 
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->key;
     }
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->current;
     }
 
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->current = $this->_parseNextDataset();
@@ -87,7 +92,7 @@ class testDataFileIterator implements Iterator
     private function _parseDataValue($dataValue)
     {
         //    discard any white space
-        $dataValue = trim($dataValue);
+        $dataValue = trim($dataValue ?? '');
         //    test for the required datatype and convert accordingly
         if (!is_numeric($dataValue)) {
             if ($dataValue == '') {

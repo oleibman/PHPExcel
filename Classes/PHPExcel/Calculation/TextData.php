@@ -353,9 +353,9 @@ class PHPExcel_Calculation_TextData
         }
 
         if (function_exists('mb_substr')) {
-            return mb_substr($value, 0, $chars, 'UTF-8');
+            return mb_substr($value ?? '', 0, $chars, 'UTF-8'); // Owen 20220822
         } else {
-            return substr($value, 0, $chars);
+            return substr($value ?? '', 0, $chars); // Owen 20220822
         }
     }
 
@@ -383,9 +383,9 @@ class PHPExcel_Calculation_TextData
         }
 
         if (function_exists('mb_substr')) {
-            return mb_substr($value, --$start, $chars, 'UTF-8');
+            return mb_substr($value ?? '', --$start, $chars, 'UTF-8'); // Owen 20220822
         } else {
-            return substr($value, --$start, $chars);
+            return substr($value ?? '', --$start, $chars); // Owen 20220822
         }
     }
 
@@ -410,6 +410,7 @@ class PHPExcel_Calculation_TextData
             $value = ($value) ? PHPExcel_Calculation::getTRUE() : PHPExcel_Calculation::getFALSE();
         }
 
+        $value = $value ?? ''; // Owen 20220822
         if ((function_exists('mb_substr')) && (function_exists('mb_strlen'))) {
             return mb_substr($value, mb_strlen($value, 'UTF-8') - $chars, $chars, 'UTF-8');
         } else {
@@ -432,6 +433,7 @@ class PHPExcel_Calculation_TextData
             $value = ($value) ? PHPExcel_Calculation::getTRUE() : PHPExcel_Calculation::getFALSE();
         }
 
+        $value = $value ?? ''; // Owen 20220822
         if (function_exists('mb_strlen')) {
             return mb_strlen($value, 'UTF-8');
         } else {

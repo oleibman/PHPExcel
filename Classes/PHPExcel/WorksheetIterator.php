@@ -27,6 +27,7 @@
  */
 class PHPExcel_WorksheetIterator implements Iterator
 {
+    // Owen 20220822 add #[\ReturnTypeWillChange]
     /**
      * Spreadsheet to iterate
      *
@@ -63,6 +64,7 @@ class PHPExcel_WorksheetIterator implements Iterator
     /**
      * Rewind iterator
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->position = 0;
@@ -73,6 +75,7 @@ class PHPExcel_WorksheetIterator implements Iterator
      *
      * @return PHPExcel_Worksheet
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->subject->getSheet($this->position);
@@ -83,6 +86,7 @@ class PHPExcel_WorksheetIterator implements Iterator
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
@@ -91,6 +95,7 @@ class PHPExcel_WorksheetIterator implements Iterator
     /**
      * Next value
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         ++$this->position;
@@ -101,6 +106,7 @@ class PHPExcel_WorksheetIterator implements Iterator
      *
      * @return boolean
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->position < $this->subject->getSheetCount();
