@@ -465,6 +465,18 @@ class PHPExcel_Reader_HTML extends PHPExcel_Reader_Abstract implements PHPExcel_
     }
 
     /**
+     * Replace mb_convert_encoding for HTML-ENTITIES,
+     * which is deprecated in Php8.2.
+     *
+     * @param  array                     $matches
+     * @return string
+     */
+    private static function replaceNonAscii($matches) // Owen 20220826
+    {
+        return '&#' . mb_ord($matches[0], 'UTF-8') . ';';
+    }
+
+    /**
      * Loads PHPExcel from file into PHPExcel instance
      *
      * @param  string                    $pFilename
@@ -492,7 +504,18 @@ class PHPExcel_Reader_HTML extends PHPExcel_Reader_Abstract implements PHPExcel_
         //    Create a new DOM object
         $dom = new domDocument;
         //    Reload the HTML file into the DOM object
-        $loaded = $dom->loadHTML(mb_convert_encoding($this->securityScanFile($pFilename), 'HTML-ENTITIES', 'UTF-8'));
+        try { // Owen 20220826
+            $convert = $this->securityScanFile($pFilename);
+            $lowend = "\u{80}";
+            $highend = "\u{10ffff}";
+            $regexp = "/[$lowend-$highend]/u";
+            /** @var callable */
+            $callback = [self::class, 'replaceNonAscii'];
+            $convert = preg_replace_callback($regexp, $callback, $convert);
+            $loaded = ($convert === null) ? false : $dom->loadHTML($convert);
+        } catch (\Throwable $e) {
+            $loaded = false;
+        }
         if ($loaded === false) {
             throw new PHPExcel_Reader_Exception('Failed to load ' . $pFilename . ' as a DOM Document');
         }
