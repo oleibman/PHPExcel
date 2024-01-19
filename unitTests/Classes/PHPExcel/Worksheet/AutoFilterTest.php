@@ -7,6 +7,9 @@ class AutoFilterTest extends PHPUnit_Framework_TestCase
 
     private $_testAutoFilterObject;
 
+    private $_mockWorksheetObject;
+
+    private $_mockCacheController;
 
     protected function setUp(): void
     {

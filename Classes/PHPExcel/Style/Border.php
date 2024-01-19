@@ -57,6 +57,9 @@ class PHPExcel_Style_Border extends PHPExcel_Style_Supervisor implements PHPExce
      */
     protected $color;
 
+    /** @var null|int */
+    public $colorIndex = null;
+
     /**
      * Parent property name
      *
