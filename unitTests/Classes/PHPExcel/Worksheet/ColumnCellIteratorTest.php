@@ -4,6 +4,7 @@ class ColumnCellIteratorTest extends PHPUnit_Framework_TestCase
 {
     public $mockWorksheet;
     public $mockColumnCell;
+    private $mockCell;
 
     protected function setUp(): void
     {

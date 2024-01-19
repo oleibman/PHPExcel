@@ -67,6 +67,16 @@ class PHPExcel_Shared_OLERead
     public $summaryInformation              = null;
     public $documentSummaryInformation      = null;
 
+    private $bigBlockChain;
+    private $entry;
+    private $extensionBlock;
+    private $numBigBlockDepotBlocks;
+    private $numExtensionBlocks;
+    private $props;
+    private $rootentry;
+    private $rootStartBlock;
+    private $sbdStartBlock;
+    private $smallBlockChain;
 
     /**
      * Read the file

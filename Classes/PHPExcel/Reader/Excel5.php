@@ -411,6 +411,9 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
      */
     private $md5Ctxt = null;
 
+    /** @var int */
+    private $textObjRef;
+
     /**
      * Create a new PHPExcel_Reader_Excel5 instance
      */
@@ -2348,6 +2351,9 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
             }
 
             // update XF index for when we read next record
+            if ($this->xfIndex === '') {
+                $this->xfIndex = '0';
+            }
             ++$this->xfIndex;
         }
     }

@@ -97,6 +97,9 @@ class PHPExcel_Style_Font extends PHPExcel_Style_Supervisor implements PHPExcel_
      */
     protected $color;
 
+    /** @var null|int */
+    public $colorIndex = null;
+
     /**
      * Create a new PHPExcel_Style_Font
      *
