@@ -1519,6 +1519,9 @@ class PHPExcel_Calculation_Engineering
         if ($dec > 511 && ($dec < hexdec('FFFFFFFE00') || $dec > hexdec('FFFFFFFFFF'))) {
             return PHPExcel_Calculation_Functions::Nan();
         }
+        if ($dec > 511 && PHP_INT_SIZE <= 4) {
+            $dec = (int) ($dec - hexdec('FFFFFFFFFF') - 1);
+        }
         $binVal = decbin($dec);
 
         return substr(self::nbrConversionFormat($binVal, $places), -10);
@@ -1610,6 +1613,9 @@ class PHPExcel_Calculation_Engineering
         $dec = hexdec($x); // Owen 2019-12-02
         if ($dec > 0x1FFFFFFF && ($dec < hexdec('FFE0000000') || $dec > hexdec('FFFFFFFFFF'))) {
             return PHPExcel_Calculation_Functions::NaN();
+        }
+        if ($dec > 0x1FFFFFFF && PHP_INT_SIZE <= 4) {
+            $dec = (int) ($dec - hexdec('FFFFFFFFFF') - 1);
         }
         $octVal = decoct($dec);
 
@@ -1758,6 +1764,9 @@ class PHPExcel_Calculation_Engineering
             $dec -= 2 * 536870912;
         }
         $hexVal = strtoupper(dechex($dec));
+        if (PHP_INT_SIZE <= 4 && strlen($hexVal) === 8 && $dec < 0) {
+            $hexVal = "FF$hexVal";
+        }
 
         return self::nbrConversionFormat($hexVal, $places);
     }
