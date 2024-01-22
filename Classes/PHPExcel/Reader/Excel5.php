@@ -67,6 +67,10 @@ if (!defined('PHPEXCEL_ROOT')) {
 //         external sheet reference structure
 class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExcel_Reader_IReader
 {
+    const HIGH_ORDER_BIT = 0x80 << 24;
+    const FC000000 = 0xFC << 24;
+    const FE000000 = 0xFE << 24;
+
     // ParseXL definitions
     const XLS_BIFF8                     = 0x0600;
     const XLS_BIFF7                     = 0x0500;
@@ -2237,7 +2241,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
                 $diagonalDown = (0x40000000 & self::getInt4d($recordData, 10)) >> 30 ? true : false;
 
                 // bit: 31; mask: 0x80000000; 1 = diagonal line from bottom left to top right
-                $diagonalUp = (0x80000000 & self::getInt4d($recordData, 10)) >> 31 ? true : false;
+                $diagonalUp = (self::HIGH_ORDER_BIT & self::getInt4d($recordData, 10)) >> 31 ? true : false;
 
                 if ($diagonalUp == false && $diagonalDown == false) {
                     $objStyle->getBorders()->setDiagonalDirection(PHPExcel_Style_Borders::DIAGONAL_NONE);
@@ -2265,7 +2269,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
                 }
 
                 // bit: 31-26; mask: 0xFC000000 fill pattern
-                if ($fillType = PHPExcel_Reader_Excel5_Style_FillPattern::lookup((0xFC000000 & self::getInt4d($recordData, 14)) >> 26)) {
+                if ($fillType = PHPExcel_Reader_Excel5_Style_FillPattern::lookup((self::FC000000 & self::getInt4d($recordData, 14)) >> 26)) {
                     $objStyle->getFill()->setFillType($fillType);
                 }
                 // offset: 18; size: 2; pattern and background colour
@@ -2313,7 +2317,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
                 $objStyle->getBorders()->getBottom()->setBorderStyle(PHPExcel_Reader_Excel5_Style_Border::lookup((0x01C00000 & $borderAndBackground) >> 22));
 
                 // bit: 31-25; mask: 0xFE000000; bottom line color
-                $objStyle->getBorders()->getBottom()->colorIndex = (0xFE000000 & $borderAndBackground) >> 25;
+                $objStyle->getBorders()->getBottom()->colorIndex = (self::FE000000 & $borderAndBackground) >> 25;
 
                 // offset: 12; size: 4; cell border lines
                 $borderLines = self::getInt4d($recordData, 12);
@@ -7466,10 +7470,10 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
     {
         $rknumhigh = self::getInt4d($data, 4);
         $rknumlow = self::getInt4d($data, 0);
-        $sign = ($rknumhigh & 0x80000000) >> 31;
+        $sign = ($rknumhigh & self::HIGH_ORDER_BIT) >> 31;
         $exp = (($rknumhigh & 0x7ff00000) >> 20) - 1023;
         $mantissa = (0x100000 | ($rknumhigh & 0x000fffff));
-        $mantissalow1 = ($rknumlow & 0x80000000) >> 31;
+        $mantissalow1 = ($rknumlow & self::HIGH_ORDER_BIT) >> 31;
         $mantissalow2 = ($rknumlow & 0x7fffffff);
         $value = $mantissa / pow(2, (20 - $exp));
 
@@ -7477,7 +7481,9 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
             $value += 1 / pow(2, (21 - $exp));
         }
 
-        $value += $mantissalow2 / pow(2, (52 - $exp));
+        if ($mantissalow2 != 0) {
+            $value += $mantissalow2 / pow(2, (52 - $exp));
+        }
         if ($sign) {
             $value *= -1;
         }
@@ -7496,7 +7502,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
             // The RK format calls for using only the most significant 30 bits
             // of the 64 bit floating point value. The other 34 bits are assumed
             // to be 0 so we use the upper 30 bits of $rknum as follows...
-            $sign = ($rknum & 0x80000000) >> 31;
+            $sign = ($rknum & self::HIGH_ORDER_BIT) >> 31;
             $exp = ($rknum & 0x7ff00000) >> 20;
             $mantissa = (0x100000 | ($rknum & 0x000ffffc));
             $value = $mantissa / pow(2, (20- ($exp - 1023)));
