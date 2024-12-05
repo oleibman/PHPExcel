@@ -1,13 +1,32 @@
 <?php
 class RenamedStylesTest extends PHPUnit_Framework_TestCase
 {
+    private static $warningMessage;
+
+    public static function errorHandler($errno, $errstr): bool
+    {
+        if ($errno === E_USER_WARNING) {
+            self::$warningMessage = $errstr;
+
+            return true;
+        }
+
+        return false; 
+    }
 
     protected function setUp(): void
     {
+        self::$warningMessage = '';
+        set_error_handler([__CLASS__, 'errorHandler']);
         if (!defined('PHPEXCEL_ROOT')) {
             define('PHPEXCEL_ROOT', APPLICATION_PATH . '/');
         }
         require_once(PHPEXCEL_ROOT . 'PHPExcel/Autoloader.php');
+    }
+
+    protected function tearDown(): void
+    {
+        restore_error_handler();
     }
 
     public function testArrayBorderStyle1()
@@ -27,15 +46,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         $sheet->getStyle('A1')->applyFromArray($styleThinBlackBorderOutline1);
         $actual = $sheet->getStyle('A1')->getBorders()->getTop()->getBorderStyle();
         self::assertEquals($expected, $actual);
+        self::assertSame('', self::$warningMessage);
     }
 
     public function testArrayBorderStyle2()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expected = PHPExcel_Style_Border::BORDER_DOTTED;
@@ -49,6 +64,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleThinBlackBorderOutline1);
+        self::assertNotEquals('', self::$warningMessage);
         $actual = $sheet->getStyle('A1')->getBorders()->getTop()->getBorderStyle();
         self::assertEquals($expected, $actual);
     }
@@ -72,6 +88,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         $sheet->getStyle('A1')->applyFromArray($styleThinBlackBorderOutline1);
         $actual = $sheet->getStyle('A1')->getBorders()->getTop()->getBorderStyle();
         self::assertEquals($expected, $actual);
+        self::assertSame('', self::$warningMessage);
     }
 
     public function testNumberFormatStyle1()
@@ -86,15 +103,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         $sheet->getStyle('A1')->applyFromArray($styleNumberFormat1);
         $actual = $sheet->getStyle('A1')->getNumberFormat()->getFormatCode();
         self::assertEquals($expected, $actual);
+        self::assertSame('', self::$warningMessage);
     }
 
     public function testNumberFormatStyle2()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expected = PHPExcel_Style_NumberFormat::FORMAT_NUMBER_00;
@@ -103,17 +116,13 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleNumberFormat1);
+        self::assertNotEquals('', self::$warningMessage);
         $actual = $sheet->getStyle('A1')->getNumberFormat()->getFormatCode();
         self::assertEquals($expected, $actual);
     }
 
     public function testNumberFormatStyle3()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expected = PHPExcel_Style_NumberFormat::FORMAT_NUMBER_00;
@@ -122,17 +131,13 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleNumberFormat1);
+        self::assertNotEquals('', self::$warningMessage);
         $actual = $sheet->getStyle('A1')->getNumberFormat()->getFormatCode();
         self::assertEquals($expected, $actual);
     }
 
     public function testNumberFormatStyle4()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expected = PHPExcel_Style_NumberFormat::FORMAT_NUMBER_00;
@@ -141,6 +146,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleNumberFormat1);
+        self::assertNotEquals('', self::$warningMessage);
         $actual = $sheet->getStyle('A1')->getNumberFormat()->getFormatCode();
         self::assertEquals($expected, $actual);
     }
@@ -165,15 +171,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         self::assertEquals($expectedrot, $align->getTextRotation());
         self::assertEquals($expectedrdord, $align->getReadOrder());
         self::assertEquals($expectedwrap, $align->getWrapText());
+        self::assertSame('', self::$warningMessage);
     }
 
     public function testAlignmentStyle2()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expectedrot = 5;
@@ -188,6 +190,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleAlignment1);
+        self::assertNotEquals('', self::$warningMessage);
         $align = $sheet->getStyle('A1')->getAlignment();
         self::assertEquals($expectedrot, $align->getTextRotation());
         self::assertEquals($expectedrdord, $align->getReadOrder());
@@ -196,11 +199,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testAlignmentStyle3()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expectedrot = 5;
@@ -215,6 +213,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleAlignment1);
+        self::assertNotEquals('', self::$warningMessage);
         $align = $sheet->getStyle('A1')->getAlignment();
         self::assertEquals($expectedrot, $align->getTextRotation());
         self::assertEquals($expectedrdord, $align->getReadOrder());
@@ -223,11 +222,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testAlignmentStyle4()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $expectedrot = 5;
@@ -242,6 +236,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleAlignment1);
+        self::assertNotEquals('', self::$warningMessage);
         $align = $sheet->getStyle('A1')->getAlignment();
         self::assertEquals($expectedrot, $align->getTextRotation());
         self::assertEquals($expectedrdord, $align->getReadOrder());
@@ -273,7 +268,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         $sheet->getStyle('A2')->applyFromArray($styleFont2);
         $sheet->setCellValue('A3', 3);
         $sheet->getStyle('A3')->applyFromArray($styleFont3);
-        $align = $sheet->getStyle('A1')->getAlignment();
+        self::assertSame('', self::$warningMessage);
         self::assertTrue($sheet->getStyle('A1')->getFont()->getStrikethrough());
         self::assertTrue($sheet->getStyle('A2')->getFont()->getSuperscript());
         self::assertTrue($sheet->getStyle('A3')->getFont()->getSubscript());
@@ -281,11 +276,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFontStyle2()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $styleFont1 = array(
@@ -309,7 +299,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         $sheet->getStyle('A2')->applyFromArray($styleFont2);
         $sheet->setCellValue('A3', 3);
         $sheet->getStyle('A3')->applyFromArray($styleFont3);
-        $align = $sheet->getStyle('A1')->getAlignment();
+        self::assertNotEquals('', self::$warningMessage);
         self::assertTrue($sheet->getStyle('A1')->getFont()->getStrikethrough());
         self::assertTrue($sheet->getStyle('A2')->getFont()->getSuperscript());
         self::assertTrue($sheet->getStyle('A3')->getFont()->getSubscript());
@@ -317,11 +307,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFontStyle3()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $styleFont1 = array(
@@ -345,6 +330,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         $sheet->getStyle('A2')->applyFromArray($styleFont2);
         $sheet->setCellValue('A3', 3);
         $sheet->getStyle('A3')->applyFromArray($styleFont3);
+        self::assertNotEquals('', self::$warningMessage);
         $align = $sheet->getStyle('A1')->getAlignment();
         self::assertTrue($sheet->getStyle('A1')->getFont()->getStrikethrough());
         self::assertTrue($sheet->getStyle('A2')->getFont()->getSuperscript());
@@ -353,11 +339,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFontStyle4()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $styleFont1 = array(
@@ -381,6 +362,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         $sheet->getStyle('A2')->applyFromArray($styleFont2);
         $sheet->setCellValue('A3', 3);
         $sheet->getStyle('A3')->applyFromArray($styleFont3);
+        self::assertNotEquals('', self::$warningMessage);
         $align = $sheet->getStyle('A1')->getAlignment();
         self::assertTrue($sheet->getStyle('A1')->getFont()->getStrikethrough());
         self::assertTrue($sheet->getStyle('A2')->getFont()->getSuperscript());
@@ -412,15 +394,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         self::assertEquals($ftype, $fill->getFillType());
         self::assertEquals($scolor, $fill->getStartColor()->getARGB());
         self::assertEquals($ecolor, $fill->getEndColor()->getARGB());
+        self::assertSame('', self::$warningMessage);
     }
 
     public function testFillStyle2()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $ftype = PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR;
@@ -440,6 +418,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleFill1);
+        self::assertNotEquals('', self::$warningMessage);
         $fill = $sheet->getStyle('A1')->getFill();
         self::assertEquals($ftype, $fill->getFillType());
         self::assertEquals($scolor, $fill->getStartColor()->getARGB());
@@ -448,11 +427,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFillStyle3()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $ftype = PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR;
@@ -472,6 +446,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleFill1);
+        self::assertNotEquals('', self::$warningMessage);
         $fill = $sheet->getStyle('A1')->getFill();
         self::assertEquals($ftype, $fill->getFillType());
         self::assertEquals($scolor, $fill->getStartColor()->getARGB());
@@ -480,11 +455,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testFillStyle4()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $ftype = PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR;
@@ -504,6 +474,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleFill1);
+        self::assertNotEquals('', self::$warningMessage);
         $fill = $sheet->getStyle('A1')->getFill();
         self::assertEquals($ftype, $fill->getFillType());
         self::assertEquals($scolor, $fill->getStartColor()->getARGB());
@@ -529,15 +500,11 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         $borders = $sheet->getStyle('A1')->getBorders();
         self::assertEquals($dtype, $borders->getDiagonalDirection());
         self::assertEquals($bcolor, $borders->getTop()->getColor()->getRGB());
+        self::assertSame('', self::$warningMessage);
     }
 
     public function testBordersStyle2()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $dtype = PHPExcel_Style_Borders::DIAGONAL_BOTH;
@@ -552,6 +519,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleBorders1);
+        self::assertNotEquals('', self::$warningMessage);
         $borders = $sheet->getStyle('A1')->getBorders();
         self::assertEquals($dtype, $borders->getDiagonalDirection());
         self::assertEquals($bcolor, $borders->getTop()->getColor()->getRGB());
@@ -559,11 +527,6 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
 
     public function testBordersStyle3()
     {
-        if (method_exists($this, 'expectWarning')) {
-            $this->expectWarning();
-        } else {
-            self::expectException('PHPUnit\\Framework\\Error\\Warning');
-        }
         $spreadsheet = new PHPExcel();
         $sheet = $spreadsheet->setActiveSheetIndex(0);
         $dtype = PHPExcel_Style_Borders::DIAGONAL_BOTH;
@@ -578,6 +541,7 @@ class RenamedStylesTest extends PHPUnit_Framework_TestCase
         );
         $sheet->setCellValue('A1', 1);
         $sheet->getStyle('A1')->applyFromArray($styleBorders1);
+        self::assertNotEquals('', self::$warningMessage);
         $borders = $sheet->getStyle('A1')->getBorders();
         self::assertEquals($dtype, $borders->getDiagonalDirection());
         self::assertEquals($bcolor, $borders->getTop()->getColor()->getRGB());
