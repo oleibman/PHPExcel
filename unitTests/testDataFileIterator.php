@@ -72,14 +72,15 @@ class testDataFileIterator implements Iterator
 
     private function _getcsv($input, $delimiter, $enclosure)
     {
+        $escape = (PHP_VERSION_ID < 70400) ? "\x00" : '';
         if (function_exists('str_getcsv')) {
-            return str_getcsv($input, $delimiter, $enclosure);
+            return str_getcsv($input, $delimiter, $enclosure, $escape);
         }
 
         $temp = fopen('php://memory', 'rw');
         fwrite($temp, $input);
         rewind($temp);
-        $data = fgetcsv($temp, strlen($input), $delimiter, $enclosure);
+        $data = fgetcsv($temp, strlen($input), $delimiter, $enclosure, $escape);
         fclose($temp);
 
         if ($data === false) {

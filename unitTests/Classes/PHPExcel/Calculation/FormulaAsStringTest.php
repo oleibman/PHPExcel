@@ -34,7 +34,7 @@ class FormulaAsStringTest extends PHPUnit_Framework_TestCase
         $cell2 = $workSheet->getCell('D1');
         $cell2->setValue($formula);
         $result = $cell2->getCalculatedValue();
-        self::assertEquals($expectedResult, $result);
+        self::assertEqualsWithDelta($expectedResult, $result, 1.0e-12);
     }
 
     public function providerFormulas()

@@ -9,6 +9,7 @@ require_once 'testDataFileIterator.php';
 
 class EngineeringTest extends PHPUnit_Framework_TestCase
 {
+    const UOM_PRECISION = 1E-12;
 
     protected function setUp(): void
     {
@@ -755,7 +756,7 @@ class EngineeringTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Calculation_Engineering','CONVERTUOM'), $args);
-        $this->assertEquals($expectedResult, $result);
+        $this->assertEqualsWithDelta($expectedResult, $result, self::UOM_PRECISION);
     }
 
     public function providerCONVERTUOM()

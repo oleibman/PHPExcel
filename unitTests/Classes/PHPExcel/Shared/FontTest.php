@@ -5,6 +5,7 @@ require_once 'testDataFileIterator.php';
 
 class FontTest extends PHPUnit_Framework_TestCase
 {
+    const FONT_PRECISION = 1.0E-12;
 
     protected function setUp(): void
     {
@@ -67,7 +68,7 @@ class FontTest extends PHPUnit_Framework_TestCase
         $args = func_get_args();
         $expectedResult = array_pop($args);
         $result = call_user_func_array(array('PHPExcel_Shared_Font','inchSizeToPixels'), $args);
-        $this->assertEquals($expectedResult, $result);
+        $this->assertEqualsWithDelta($expectedResult, $result, self::FONT_PRECISION);
     }
 
     public function providerInchSizeToPixels()
