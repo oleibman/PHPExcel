@@ -81,8 +81,8 @@ class EngineeringTest extends PHPUnit_Framework_TestCase
                 }
             }
         }
-        if ($expectedResult === '#NUM!' && ((string) $result === 'NAN')) {
-            $result = $expectedResult;
+        if (is_float($result) && is_nan($result)) {
+            $result = '#NUM!';
         }
         if (method_exists($this, 'assertEqualsWithDelta')) {
             $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);
@@ -112,8 +112,8 @@ class EngineeringTest extends PHPUnit_Framework_TestCase
                 }
             }
         }
-        if ($expectedResult === '#NUM!' && ((string) $result === 'NAN')) {
-            $result = $expectedResult;
+        if (is_float($result) && is_nan($result)) {
+            $result = '#NUM!';
         }
         if (method_exists($this, 'assertEqualsWithDelta')) {
             $this->assertEqualsWithDelta($expectedResult, $result, 1E-8);

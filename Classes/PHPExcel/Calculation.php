@@ -2276,12 +2276,12 @@ class PHPExcel_Calculation
     /**
      * Rename calculation cache for a specified worksheet
      *
-     * @param string $fromWorksheetName
+     * @param ?string $fromWorksheetName
      * @param string $toWorksheetName
      */
     public function renameCalculationCacheForWorksheet($fromWorksheetName, $toWorksheetName)
     {
-        if (isset($this->calculationCache[$fromWorksheetName])) {
+        if (isset($this->calculationCache[$fromWorksheetName ?? ''])) {
             $this->calculationCache[$toWorksheetName] = &$this->calculationCache[$fromWorksheetName];
             unset($this->calculationCache[$fromWorksheetName]);
         }
@@ -3410,7 +3410,7 @@ class PHPExcel_Calculation
                             $val = (float) $val;
                         } else {
 //                            echo 'Casting '.$val.' to integer<br />';
-                            $val = (integer) $val;
+                            $val = (int) $val;
                         }
                     } elseif (isset(self::$excelConstants[trim(strtoupper($val))])) {
                         $excelConstant = trim(strtoupper($val));

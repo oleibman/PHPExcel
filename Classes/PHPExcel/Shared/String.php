@@ -817,4 +817,21 @@ class PHPExcel_Shared_String
         $v = floatval($value);
         return (is_numeric(substr($value, 0, strlen($v)))) ? $v : $value;
     }
+
+    /**
+     * Php introduced str_increment with Php8.3,
+     * but didn't issue deprecation notices till 8.5.
+     *
+     * @codeCoverageIgnore
+     */
+    public static function stringIncrement(string &$str): string
+    {
+        if (function_exists('str_increment')) {
+            $str = str_increment($str); // @phpstan-ignore-line
+        } else {
+            ++$str; // @phpstan-ignore-line
+        }
+
+        return $str; // @phpstan-ignore-line
+    }
 }

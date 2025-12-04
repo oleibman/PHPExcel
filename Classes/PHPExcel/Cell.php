@@ -496,7 +496,7 @@ class PHPExcel_Cell
      */
     public function isInMergeRange()
     {
-        return (boolean) $this->getMergeRange();
+        return (bool) $this->getMergeRange();
     }
 
     /**
@@ -887,7 +887,7 @@ class PHPExcel_Cell
                 list($rangeStart, $rangeEnd)    = $range;
                 sscanf($rangeStart, '%[A-Z]%d', $startCol, $startRow);
                 sscanf($rangeEnd, '%[A-Z]%d', $endCol, $endRow);
-                ++$endCol;
+                PHPExcel_Shared_String::stringIncrement($endCol);
 
                 // Current data
                 $currentCol = $startCol;
@@ -899,7 +899,9 @@ class PHPExcel_Cell
                         $returnValue[] = $currentCol.$currentRow;
                         ++$currentRow;
                     }
-                    ++$currentCol;
+                    PHPExcel_Shared_String::stringIncrement(
+                        $currentCol
+                    );
                     $currentRow = $startRow;
                 }
             }

@@ -37,7 +37,10 @@ class RowCellIteratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($RowCellIndexResult, $iterator->key());
         
         foreach ($iterator as $key => $RowCell) {
-            $this->assertEquals($RowCellIndexResult++, $key);
+            $this->assertEquals($RowCellIndexResult, $key);
+            PHPExcel_Shared_String::stringIncrement(
+                $RowCellIndexResult
+            );
             $this->assertInstanceOf('PHPExcel_Cell', $RowCell);
         }
     }
@@ -49,7 +52,10 @@ class RowCellIteratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($RowCellIndexResult, $iterator->key());
         
         foreach ($iterator as $key => $RowCell) {
-            $this->assertEquals($RowCellIndexResult++, $key);
+            $this->assertEquals($RowCellIndexResult, $key);
+            PHPExcel_Shared_String::stringIncrement(
+                $RowCellIndexResult
+            );
             $this->assertInstanceOf('PHPExcel_Cell', $RowCell);
         }
     }

@@ -33,7 +33,8 @@ class ColumnIteratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($columnIndexResult, $iterator->key());
         
         foreach ($iterator as $key => $column) {
-            $this->assertEquals($columnIndexResult++, $key);
+            $this->assertEquals($columnIndexResult, $key);
+            PHPExcel_Shared_String::stringIncrement($columnIndexResult);
             $this->assertInstanceOf('PHPExcel_Worksheet_Column', $column);
         }
     }
@@ -45,7 +46,8 @@ class ColumnIteratorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($columnIndexResult, $iterator->key());
         
         foreach ($iterator as $key => $column) {
-            $this->assertEquals($columnIndexResult++, $key);
+            $this->assertEquals($columnIndexResult, $key);
+            PHPExcel_Shared_String::stringIncrement($columnIndexResult);
             $this->assertInstanceOf('PHPExcel_Worksheet_Column', $column);
         }
     }
